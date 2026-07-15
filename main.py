@@ -117,10 +117,8 @@ def get_directions():
     prompt = f"User Question: \"{query}\"\nAssumed Start Location if not specified: \"{start_location}\""
     
     try:
-        # Run the async agent chat call in the synchronous Flask handler
         agent_response_text = asyncio.run(query_antigravity_agent(prompt))
         
-        # Clean response if the model accidentally wrapped it in markdown code blocks
         clean_text = agent_response_text.strip()
         if clean_text.startswith("```"):
             lines = clean_text.splitlines()
@@ -134,9 +132,8 @@ def get_directions():
     except Exception as e:
         print(f"Error querying Antigravity Agent: {e}")
         return jsonify({
-            "status": "error",
-            "message": f"Failed to communicate with GenAI: {str(e)}. Using offline fallback."
-        }), 500
+            "error": "The AI is currently busy. Please wait a moment or use the interactive map."
+        }), 200
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
@@ -181,7 +178,7 @@ def chat():
             return jsonify({"text": text}), 200
     except Exception as e:
         print(f"Error querying Gemini API: {e}")
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": "The AI is currently busy. Please wait a moment or use the interactive map."}), 200
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))

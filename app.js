@@ -806,17 +806,33 @@ function drawStadiumSVG() {
       }
 
       const startLoc   = getStartLocation();
-      const levelDigit = Math.floor(startLoc.level / 100);
-      const sectionId  = levelDigit * 100 + (textVal % 100);
-      const facHere = STADIUM_DATA.facilities.find(
-        f => f.section === sectionId || f.section === textVal
-      );
-      if (facHere) {
-        const catLabel = getCategoryLabel(facHere.category);
-        queryInput.value = `${catLabel}: ${facHere.shortName}`;
-      } else {
-        queryInput.value = `Go to Section ${sectionId}`;
+      
+      let nearestDist = Infinity;
+      let nearestQuery = '';
+
+      // Check all facilities on current level
+      STADIUM_DATA.facilities.filter(f => f.level === startLoc.level).forEach(f => {
+        const fc = getStadiumCoords(f.section, f.level);
+        const d = Math.sqrt((fc.x - exactDest.x) ** 2 + (fc.y - exactDest.y) ** 2);
+        if (d < nearestDist) {
+          nearestDist = d;
+          nearestQuery = `${getCategoryLabel(f.category)}: ${f.shortName}`;
+        }
+      });
+
+      // Check all sections on current level
+      const baseLevel = startLoc.level;
+      for (let s = 1; s <= 48; s++) {
+        const secId = baseLevel + s;
+        const sc = getStadiumCoords(secId, baseLevel);
+        const d = Math.sqrt((sc.x - exactDest.x) ** 2 + (sc.y - exactDest.y) ** 2);
+        if (d < nearestDist) {
+          nearestDist = d;
+          nearestQuery = `Go to Section ${secId}`;
+        }
       }
+      
+      queryInput.value = nearestQuery;
       runOfflineEngine(queryInput.value, startLoc.section, startLoc.level, exactDest);
     });
     layoutGroup.appendChild(path);
@@ -1839,6 +1855,7 @@ async function askGenAI(userQuery) {
     }
 
     const data = await response.json();
+    if (data.error) throw new Error(data.error);
 
     // Extract text from backend response
     const rawText = data.text;
