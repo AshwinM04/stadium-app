@@ -216,8 +216,8 @@ main {
   gap: 16px;
   padding: 0 16px;
 }
-.control-panels.hidden {
-  display: none;
+.hidden {
+  display: none !important;
 }
 
 /* ── Glass Card ──────────────────────────────────────────── */

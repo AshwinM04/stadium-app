@@ -853,16 +853,14 @@ function drawStadiumSVG() {
   });
 
   // ── Facility icon nodes ──
-  STADIUM_DATA.facilities.forEach(fac => {
+  const currentLvl = getStartLocation().level;
+  const currentLevelFacilities = STADIUM_DATA.facilities.filter(f => f.level === currentLvl);
+
+  currentLevelFacilities.forEach(fac => {
     const coords = getStadiumCoords(fac.section, fac.level);
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     g.setAttribute('class', 'facility-node');
     g.setAttribute('id', `node_${fac.id}`);
-    g.addEventListener('click', () => {
-      const catLabel = getCategoryLabel(fac.category);
-      queryInput.value = `${catLabel}: ${fac.shortName}`;
-      handleConciergeSearch();
-    });
 
     const colorMap = { bathroom: '#00e676', food: '#ffd700', firstaid: '#ff3366', merch: '#ff007f' };
     const emojiMap = { bathroom: '🚻', food: '🍔', firstaid: '🏥', merch: '🛍️' };
@@ -886,6 +884,51 @@ function drawStadiumSVG() {
     txt.setAttribute('dominant-baseline', 'central');
     txt.textContent = emoji;
     g.appendChild(txt);
+
+    g.addEventListener('click', () => {
+      // Highlight selection
+      document.querySelectorAll('.facility-node circle').forEach(c => {
+        c.setAttribute('stroke-width', '1');
+        c.setAttribute('fill', 'rgba(15,14,28,0.92)');
+      });
+      circle.setAttribute('stroke-width', '3');
+      circle.setAttribute('fill', color);
+
+      // Open Search overlay
+      const controlPanels = document.getElementById('control-panels');
+      if (controlPanels) controlPanels.classList.remove('hidden');
+
+      // Populate nearby amenities
+      const nearbyContainer = document.getElementById('nearby-amenities-container');
+      const nearbyList = document.getElementById('nearby-amenities-list');
+      if (nearbyContainer && nearbyList) {
+        nearbyContainer.classList.remove('hidden');
+        nearbyList.innerHTML = '';
+        
+        const facBase = ((fac.section - 1) % 100) % 48 + 1;
+        const nearby = STADIUM_DATA.facilities.filter(f => {
+          if (f.id === fac.id || f.level !== fac.level) return false;
+          const fBase = ((f.section - 1) % 100) % 48 + 1;
+          const dist = Math.min(Math.abs(fBase - facBase), 48 - Math.abs(fBase - facBase));
+          return dist <= 5;
+        }).slice(0, 3);
+        
+        if (nearby.length === 0) {
+          const li = document.createElement('li');
+          li.textContent = 'No other amenities nearby.';
+          nearbyList.appendChild(li);
+        } else {
+          nearby.forEach(nf => {
+            const li = document.createElement('li');
+            li.textContent = `• ${getCategoryLabel(nf.category)}: ${nf.shortName} (Sec ${nf.section})`;
+            nearbyList.appendChild(li);
+          });
+        }
+      }
+
+      const catLabel = getCategoryLabel(fac.category);
+      queryInput.value = `${catLabel}: ${fac.shortName}`;
+    });
 
     layoutGroup.appendChild(g);
   });
@@ -972,6 +1015,7 @@ function triggerMapUpdate() {
   const c   = getStadiumCoords(loc.section, loc.level);
   document.getElementById('start-pin').setAttribute('cx', c.x);
   document.getElementById('start-pin').setAttribute('cy', c.y);
+  drawStadiumSVG();
 }
 
 // ── Input event listeners ──────────────────────────────────
