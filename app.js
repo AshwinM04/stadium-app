@@ -1855,7 +1855,12 @@ async function askGenAI(userQuery) {
     }
 
     const data = await response.json();
-    if (data.error) throw new Error(data.error);
+    if (data.error) {
+      removeTypingIndicator();
+      renderAIMessage('bot', mdToHtml(`⚠️ ${data.error}`));
+      setAIStatus('idle');
+      return;
+    }
 
     // Extract text from backend response
     const rawText = data.text;
