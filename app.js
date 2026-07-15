@@ -1113,7 +1113,7 @@ async function checkBackendStatus() {
   try {
     const res  = await fetch(`${BACKEND_URL}/api/status`);
     const data = await res.json();
-    isBackendOnline = data.status === 'online' && data.has_api_key;
+    isBackendOnline = data.status === 'online';
     updateStatusUI();
   } catch {
     isBackendOnline = false;
