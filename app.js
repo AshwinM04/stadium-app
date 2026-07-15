@@ -1786,6 +1786,25 @@ function initAIChat() {
     });
   }
 
+  const fabBtn    = document.getElementById('ai-fab');
+  const chatCard  = document.getElementById('ai-chat-card');
+  const chatClose = document.getElementById('ai-chat-close-btn');
+
+  if (fabBtn && chatCard) {
+    fabBtn.addEventListener('click', () => {
+      chatCard.classList.add('open');
+      fabBtn.classList.add('hidden');
+      if (aiInput) aiInput.focus();
+    });
+  }
+
+  if (chatClose && chatCard) {
+    chatClose.addEventListener('click', () => {
+      chatCard.classList.remove('open');
+      if (fabBtn) fabBtn.classList.remove('hidden');
+    });
+  }
+
   if (!aiSendBtn || !aiInput) return;
 
   // Click → send

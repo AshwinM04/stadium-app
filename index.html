@@ -214,8 +214,15 @@
         </ol>
       </section>
 
-      <!-- ⑦ GenAI Concierge Chat -->
+      <!-- AI Chat FAB -->
+      <button id="ai-fab" class="ai-fab" aria-label="Open AI Chat">
+        <span class="ai-spark">✨</span> Ask AI
+      </button>
+
+      <!-- ⑦ GenAI Concierge Chat (Bottom Sheet) -->
       <section id="ai-chat-card" class="glass-card ai-chat-card">
+        <!-- Close handle -->
+        <div class="ai-chat-drag-handle"></div>
 
         <!-- Card header -->
         <div class="ai-chat-header">
@@ -226,10 +233,14 @@
               <p class="ai-chat-subtitle" data-i18n="aiChatSubtitle">Ask anything about the stadium — powered by Gemini</p>
             </div>
           </div>
-          <!-- Status pill: idle / thinking / error -->
-          <div id="ai-status-pill" class="ai-status-pill ai-status-idle">
-            <span class="ai-status-dot"></span>
-            <span id="ai-status-label" data-i18n="aiStatusReady">Ready</span>
+          <div class="ai-chat-header-actions">
+            <!-- Status pill: idle / thinking / error -->
+            <div id="ai-status-pill" class="ai-status-pill ai-status-idle">
+              <span class="ai-status-dot"></span>
+              <span id="ai-status-label" data-i18n="aiStatusReady">Ready</span>
+            </div>
+            <!-- Close button -->
+            <button id="ai-chat-close-btn" class="ai-chat-close-btn" aria-label="Close Chat">×</button>
           </div>
         </div>
 
