@@ -1,6 +1,6 @@
 import os
 import asyncio
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from dotenv import load_dotenv
 
@@ -80,6 +80,14 @@ async def query_antigravity_agent(prompt: str):
         async for token in response:
             text_parts.append(token)
         return "".join(text_parts)
+
+@app.route('/')
+def serve_index():
+    return send_from_directory('.', 'index.html')
+
+@app.route('/<path:filename>')
+def serve_static(filename):
+    return send_from_directory('.', filename)
 
 @app.route('/api/status', methods=['GET'])
 def get_status():
