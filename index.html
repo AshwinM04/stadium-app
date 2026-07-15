@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="Global Fan Concierge – Interactive mobile-first stadium navigation for FIFA World Cup 2026. Get step-by-step directions in any language.">
+  <meta name="theme-color" content="#080710">
+  <title>Global Fan Concierge – FIFA World Cup 2026</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+
+    <!-- Header -->
+    <header>
+      <div class="header-top">
+        <div class="brand">
+          <div class="brand-logo">26</div>
+          <div class="brand-text">
+            <h1 data-i18n="appTitle">Fan Concierge</h1>
+            <span data-i18n="appSubtitle">FIFA World Cup 2026</span>
+          </div>
+        </div>
+        <!-- Language Selector -->
+        <div class="lang-selector-wrapper">
+          <select id="lang-select" class="lang-select" aria-label="Language">
+            <option value="auto" selected>🌐 Auto</option>
+            <option value="en">🇺🇸 English</option>
+            <option value="es">🇪🇸 Español</option>
+            <option value="fr">🇫🇷 Français</option>
+            <option value="de">🇩🇪 Deutsch</option>
+            <option value="pt">🇧🇷 Português</option>
+            <option value="ja">🇯🇵 日本語</option>
+          </select>
+        </div>
+        <!-- Connection status / mode toggle -->
+        <div id="connection-status" class="status-badge online" title="Click to toggle GenAI / Offline mode">
+          <span class="status-dot"></span>
+          <span id="status-text" data-i18n="modeGenAI">GenAI Mode</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Scrollable Main Content -->
+    <main>
+
+      <!-- ① Stadium + Location Selector -->
+      <section class="glass-card location-selector">
+        <label class="location-title" for="stadium-select" data-i18n="sectionStadiumLocation">Stadium &amp; Location</label>
+
+        <!-- Stadium picker -->
+        <div class="stadium-select-wrapper">
+          <select id="stadium-select" class="stadium-select" aria-label="Select Stadium">
+            <option value="metlife">🏟️ MetLife Stadium — East Rutherford, NJ</option>
+            <option value="sofi">🏟️ SoFi Stadium — Los Angeles, CA</option>
+            <option value="azteca">🏟️ Estadio Azteca — Mexico City</option>
+          </select>
+        </div>
+
+        <!-- Level + Section searchable inputs -->
+        <div class="selector-grid">
+          <div class="searchable-select-wrapper">
+            <input
+              type="text"
+              id="start-level-input"
+              placeholder="Level…"
+              data-i18n-placeholder="placeholderLevel"
+              list="start-levels"
+              value="100-Level (Lower)"
+              autocomplete="off"
+              aria-label="Current Level"
+            >
+            <datalist id="start-levels">
+              <!-- Populated by JS -->
+            </datalist>
+          </div>
+          <div class="searchable-select-wrapper">
+            <input
+              type="text"
+              id="start-section-input"
+              placeholder="Section or Gate…"
+              data-i18n-placeholder="placeholderSection"
+              list="start-sections"
+              value="Section 101"
+              autocomplete="off"
+              aria-label="Current Section or Gate"
+            >
+            <datalist id="start-sections">
+              <!-- Populated by JS -->
+            </datalist>
+          </div>
+        </div>
+      </section>
+
+      <!-- ② Query Input Card -->
+      <section class="glass-card search-card">
+        <div class="input-container">
+          <input
+            type="text"
+            id="query-input"
+            class="search-input"
+            placeholder="Where is the nearest bathroom? / ¿Dónde está…?"
+            data-i18n-placeholder="placeholderQuery"
+            enterkeyhint="search"
+            autocomplete="off"
+            aria-label="Stadium question input"
+          >
+          <button id="search-btn" class="search-button" aria-label="Search">
+            <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          </button>
+        </div>
+
+        <!-- Quick-access category badges -->
+        <div class="categories-wrapper">
+          <div class="category-badge bathroom-badge" data-category="bathroom">
+            <span class="category-icon">🚻</span><span data-i18n="badgeRestrooms">Restrooms</span>
+          </div>
+          <div class="category-badge food-badge" data-category="food">
+            <span class="category-icon">🍔</span><span data-i18n="badgeFood">Food &amp; Drinks</span>
+          </div>
+          <div class="category-badge merch-badge" data-category="merch">
+            <span class="category-icon">🛍️</span><span data-i18n="badgeMerch">FIFA Store</span>
+          </div>
+          <div class="category-badge aid-badge" data-category="firstaid">
+            <span class="category-icon">🏥</span><span data-i18n="badgeFirstAid">First Aid</span>
+          </div>
+          <div class="category-badge gate-badge" data-category="gate">
+            <span class="category-icon">🚪</span><span data-i18n="badgeGates">Gates</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ③ Interactive SVG Map -->
+      <section class="glass-card map-card">
+        <div class="map-header">
+          <h2 class="map-title" data-i18n="mapTitle">Interactive Stadium Map</h2>
+          <div class="map-legend">
+            <div class="legend-item">
+              <span class="legend-color start"></span><span data-i18n="legendStart">Start</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-color end"></span><span data-i18n="legendDest">Destination</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="map-viewport">
+          <svg viewBox="0 0 200 200" id="stadium-svg" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="2.5" result="blur"/>
+                <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+              </filter>
+            </defs>
+
+            <!-- Pitch -->
+            <rect x="85" y="70" width="30" height="60" rx="4"
+                  fill="#1b5e20" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+            <line x1="85" y1="100" x2="115" y2="100"
+                  stroke="rgba(255,255,255,0.2)" stroke-width="0.8"/>
+            <circle cx="100" cy="100" r="9"
+                    fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="0.8"/>
+
+            <!-- Bowl rings -->
+            <circle cx="100" cy="100" r="42" class="map-ring-inner"/>
+            <circle cx="100" cy="100" r="57" class="map-ring-inner"/>
+            <circle cx="100" cy="100" r="72" class="map-ring-inner"/>
+            <circle cx="100" cy="100" r="85" class="map-ring"/>
+
+            <!-- Dynamic layout group -->
+            <g id="stadium-layout"></g>
+
+            <!-- Active route path -->
+            <path id="active-route" class="route-path" d="" filter="url(#glow)"/>
+
+            <!-- Start / End pins -->
+            <circle id="start-pin" class="start-pin" cx="-20" cy="-20" r="5"/>
+            <circle id="end-pin"   class="end-pin"   cx="-20" cy="-20" r="5"/>
+          </svg>
+        </div>
+      </section>
+
+      <!-- ④ Loading State -->
+      <section id="loading-card" class="glass-card loading-card">
+        <div class="spinner"></div>
+        <p data-i18n="loadingText">Analysing request &amp; plotting route…</p>
+      </section>
+
+      <!-- ⑤ Directions Results -->
+      <section id="results-card" class="glass-card results-card">
+        <div class="results-header">
+          <div class="results-title">
+            <h2 id="destination-title">Restroom near Section 112</h2>
+            <span id="detected-lang" class="language-indicator">Detected: English</span>
+          </div>
+          <button id="speak-btn" class="speak-button" aria-label="Listen to directions">
+            <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+          </button>
+        </div>
+
+        <!-- Google Maps link -->
+        <div class="results-actions">
+          <a id="google-maps-btn" class="google-maps-btn"
+             href="https://www.google.com/maps/search/?api=1&query=MetLife+Stadium+East+Rutherford+NJ"
+             target="_blank" rel="noopener noreferrer">
+            <svg class="maps-icon" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+            <span data-i18n="mapsBtn">View in Google Maps</span>
+          </a>
+        </div>
+
+        <!-- Step-by-step directions -->
+        <ol id="directions-list" class="directions-list">
+          <!-- Filled by JavaScript -->
+        </ol>
+      </section>
+
+      <!-- ⑦ GenAI Concierge Chat -->
+      <section id="ai-chat-card" class="glass-card ai-chat-card">
+
+        <!-- Card header -->
+        <div class="ai-chat-header">
+          <div class="ai-chat-title-row">
+            <span class="ai-spark">✨</span>
+            <div>
+              <h2 class="ai-chat-title" data-i18n="aiChatTitle">AI Stadium Concierge</h2>
+              <p class="ai-chat-subtitle" data-i18n="aiChatSubtitle">Ask anything about the stadium — powered by Gemini</p>
+            </div>
+          </div>
+          <!-- Status pill: idle / thinking / error -->
+          <div id="ai-status-pill" class="ai-status-pill ai-status-idle">
+            <span class="ai-status-dot"></span>
+            <span id="ai-status-label" data-i18n="aiStatusReady">Ready</span>
+          </div>
+        </div>
+
+        <!-- Scrollable message thread -->
+        <div id="ai-thread" class="ai-thread" aria-live="polite" aria-label="AI conversation">
+          <!-- Welcome bubble -->
+          <div class="ai-bubble ai-bubble-bot">
+            <span class="ai-bubble-avatar">🤖</span>
+            <div class="ai-bubble-body">
+              <p class="ai-bubble-text" data-i18n="aiWelcome">Hi! I'm your AI Stadium Concierge. Ask me anything — food recommendations, gate directions, rules, accessibility, or anything else about your experience today.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sticky chat input row -->
+        <div class="ai-input-row">
+          <input
+            type="text"
+            id="ai-query-input"
+            class="ai-input"
+            placeholder="Ask the AI anything…"
+            data-i18n-placeholder="aiPlaceholder"
+            enterkeyhint="send"
+            autocomplete="off"
+            aria-label="Ask the AI"
+          >
+          <button id="ai-send-btn" class="ai-send-btn" aria-label="Send to AI">
+            <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          </button>
+        </div>
+
+      </section>
+
+      <!-- ⑥ Talk to Staff — Fan-to-Staff Translator -->
+      <section class="glass-card staff-card">
+        <div class="staff-header">
+          <div class="staff-title-row">
+            <span class="staff-megaphone">📣</span>
+            <div>
+              <h2 class="staff-title" data-i18n="staffTitle">Talk to Staff</h2>
+              <p class="staff-subtitle" data-i18n="staffSubtitle">Tap a phrase — it plays aloud in the stadium's language so any worker can hear it.</p>
+            </div>
+          </div>
+          <!-- Stadium language badge -->
+          <div class="staff-lang-badge" id="staff-lang-badge">
+            <span id="staff-lang-flag">🇺🇸</span>
+            <span id="staff-lang-name">English</span>
+          </div>
+        </div>
+
+        <!-- Phrase categories tabs -->
+        <div class="staff-tabs" id="staff-tabs">
+          <button class="staff-tab active" data-staff-cat="emergency" data-i18n="staffTabEmergency">🆘 Emergency</button>
+          <button class="staff-tab" data-staff-cat="navigation" data-i18n="staffTabNavigation">🗺️ Navigation</button>
+          <button class="staff-tab" data-staff-cat="needs" data-i18n="staffTabNeeds">🛎️ Needs</button>
+          <button class="staff-tab" data-staff-cat="courtesy" data-i18n="staffTabCourtesy">🤝 Courtesy</button>
+        </div>
+
+        <!-- Phrase buttons (filled by JS per active tab) -->
+        <div id="staff-phrases" class="staff-phrases"></div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+      <p><strong data-i18n="footerBrand">Global Fan Concierge</strong> &bull; FIFA World Cup 2026</p>
+      <p id="footer-connection" data-i18n="footerMode">Running in GenAI Mode with automatic offline fallback</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
