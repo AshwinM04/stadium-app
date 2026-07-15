@@ -794,7 +794,17 @@ function drawStadiumSVG() {
     path.setAttribute('data-section', textVal);
     path.setAttribute('fill', 'rgba(255,255,255,0.02)');
     path.setAttribute('stroke', 'rgba(255,255,255,0.05)');
-    path.addEventListener('click', () => {
+    path.addEventListener('click', (e) => {
+      const svg = document.getElementById('stadium-svg');
+      let exactDest = null;
+      if (svg) {
+        const pt = svg.createSVGPoint();
+        pt.x = e.clientX;
+        pt.y = e.clientY;
+        const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
+        exactDest = { x: svgP.x, y: svgP.y };
+      }
+
       const startLoc   = getStartLocation();
       const levelDigit = Math.floor(startLoc.level / 100);
       const sectionId  = levelDigit * 100 + (textVal % 100);
@@ -807,7 +817,7 @@ function drawStadiumSVG() {
       } else {
         queryInput.value = `Go to Section ${sectionId}`;
       }
-      handleConciergeSearch();
+      runOfflineEngine(queryInput.value, startLoc.section, startLoc.level, exactDest);
     });
     layoutGroup.appendChild(path);
 
@@ -903,13 +913,23 @@ function drawStadiumSVG() {
     fo.appendChild(i);
     g.appendChild(fo);
 
-    g.addEventListener('click', () => {
+    g.addEventListener('click', (e) => {
       // Highlight selection
       document.querySelectorAll('.facility-node circle').forEach(c => {
         c.setAttribute('stroke', 'none');
       });
       circle.setAttribute('stroke', '#FFFFFF');
       circle.setAttribute('stroke-width', '2');
+
+      const svg = document.getElementById('stadium-svg');
+      let exactDest = null;
+      if (svg) {
+        const pt = svg.createSVGPoint();
+        pt.x = e.clientX;
+        pt.y = e.clientY;
+        const svgP = pt.matrixTransform(svg.getScreenCTM().inverse());
+        exactDest = { x: svgP.x, y: svgP.y };
+      }
 
       // Open Search overlay
       const controlPanels = document.getElementById('control-panels');
@@ -945,6 +965,8 @@ function drawStadiumSVG() {
 
       const catLabel = getCategoryLabel(fac.category);
       queryInput.value = `${catLabel}: ${fac.shortName}`;
+      const loc = getStartLocation();
+      runOfflineEngine(queryInput.value, loc.section, loc.level, exactDest);
     });
 
     layoutGroup.appendChild(g);
@@ -1052,11 +1074,11 @@ startSectionInput.addEventListener('input', () => {
 });
 
 // ── Route Drawing ──────────────────────────────────────────
-function drawActiveRoute(startSec, startLvl, endSec, endLvl) {
+function drawActiveRoute(startSec, startLvl, endSec, endLvl, exactDestCoords = null) {
   const endPin      = document.getElementById('end-pin');
   const activeRoute = document.getElementById('active-route');
 
-  const endCoords = getStadiumCoords(endSec, endLvl);
+  const endCoords = exactDestCoords || getStadiumCoords(endSec, endLvl);
   endPin.setAttribute('cx', endCoords.x);
   endPin.setAttribute('cy', endCoords.y);
 
@@ -1073,6 +1095,10 @@ function drawActiveRoute(startSec, startLvl, endSec, endLvl) {
     const p2 = `L ${gateEndC.x} ${gateEndC.y}`;
     const p3 = buildArcPath(gateData.section, endSec, endLvl, true);
     pathStr  = `${p1} ${p2} ${p3}`;
+  }
+
+  if (exactDestCoords) {
+    pathStr += ` L ${exactDestCoords.x} ${exactDestCoords.y}`;
   }
 
   activeRoute.setAttribute('d', pathStr);
@@ -1310,7 +1336,7 @@ function resolveLanguage(query) {
 }
 
 // ── Offline Routing Engine ─────────────────────────────────
-function runOfflineEngine(query, defaultStartSec, defaultStartLvl) {
+function runOfflineEngine(query, defaultStartSec, defaultStartLvl, exactDestCoords = null) {
   loadingCard.style.display = 'none';
   resultsCard.style.display = 'flex';
 
@@ -1339,7 +1365,7 @@ function runOfflineEngine(query, defaultStartSec, defaultStartLvl) {
   if (destSecMatch) {
     const secNum  = parseInt(destSecMatch[1]);
     const destLvl = Math.floor(secNum / 100) * 100;
-    return resolveAndRender(lang, startSec, startLvl, secNum.toString(), destLvl, `Section ${secNum}`);
+    return resolveAndRender(lang, startSec, startLvl, secNum.toString(), destLvl, `Section ${secNum}`, null, exactDestCoords);
   }
 
   // D. Category detection
@@ -1358,7 +1384,7 @@ function runOfflineEngine(query, defaultStartSec, defaultStartLvl) {
     const gateKey = Object.keys(STADIUM_DATA.gates).find(gk => norm.includes(gk.toLowerCase()));
     if (gateKey) {
       const g = STADIUM_DATA.gates[gateKey];
-      return resolveAndRender(lang, startSec, startLvl, g.section.toString(), g.level, gateKey);
+      return resolveAndRender(lang, startSec, startLvl, g.section.toString(), g.level, gateKey, null, exactDestCoords);
     }
     let targetGate = null;
     if      (/\b(north|norte|nord)\b/i.test(norm)) targetGate = Object.keys(STADIUM_DATA.gates).find(k => /north|norte|nord|budlight|bud light|1/i.test(k));
@@ -1367,7 +1393,7 @@ function runOfflineEngine(query, defaultStartSec, defaultStartLvl) {
     else if (/\b(west|oeste|ouest)\b/i.test(norm)) targetGate = Object.keys(STADIUM_DATA.gates).find(k => /west|oeste|metlife|4/i.test(k));
     if (!targetGate) targetGate = Object.keys(STADIUM_DATA.gates)[0];
     const g = STADIUM_DATA.gates[targetGate];
-    return resolveAndRender(lang, startSec, startLvl, g.section.toString(), g.level, targetGate);
+    return resolveAndRender(lang, startSec, startLvl, g.section.toString(), g.level, targetGate, null, exactDestCoords);
   }
 
   // F. Facility matching
@@ -1397,7 +1423,7 @@ function runOfflineEngine(query, defaultStartSec, defaultStartLvl) {
 
   const catLabel = getCategoryLabel(matchedFac.category);
   const destName = `${catLabel}: ${matchedFac.shortName}`;
-  resolveAndRender(lang, startSec, startLvl, matchedFac.section.toString(), matchedFac.level, destName, matchedFac);
+  resolveAndRender(lang, startSec, startLvl, matchedFac.section.toString(), matchedFac.level, destName, matchedFac, exactDestCoords);
 }
 
 function closestOf(list, startSec, startLvl) {
@@ -1412,7 +1438,7 @@ function closestOf(list, startSec, startLvl) {
 }
 
 // ── Render directions into UI ──────────────────────────────
-function resolveAndRender(lang, startSec, startLvl, destSec, destLvl, destName, fac) {
+function resolveAndRender(lang, startSec, startLvl, destSec, destLvl, destName, fac, exactDestCoords = null) {
   // Save state so language change can re-render without requiring a new search
   lastRenderState = { lang, startSec, startLvl, destSec, destLvl, destName, fac };
 
@@ -1483,7 +1509,7 @@ function resolveAndRender(lang, startSec, startLvl, destSec, destLvl, destName, 
   currentDirections        = steps;
   steps.forEach((step, idx) => appendStep(step, idx + 1));
 
-  drawActiveRoute(startSec, startLvl, destSec, destLvl);
+  drawActiveRoute(startSec, startLvl, destSec, destLvl, exactDestCoords);
 }
 
 // ── Language code helper ───────────────────────────────────
