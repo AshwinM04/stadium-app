@@ -44,6 +44,14 @@
     <!-- Scrollable Main Content -->
     <main>
 
+      <div class="header-actions-row" style="display: flex; gap: 8px; justify-content: center; padding-bottom: 12px; z-index: 100;">
+        <button id="toggle-search-btn" class="status-badge" style="background: var(--accent-green); color: #000; border: none; font-weight: bold;">
+          🔍 Search & Navigate
+        </button>
+      </div>
+
+      <div id="control-panels" class="control-panels hidden">
+
       <!-- ① Stadium + Location Selector -->
       <section class="glass-card location-selector">
         <label class="location-title" for="stadium-select" data-i18n="sectionStadiumLocation">Stadium &amp; Location</label>
@@ -129,6 +137,7 @@
           </div>
         </div>
       </section>
+      </div> <!-- End control-panels -->
 
       <!-- ③ Interactive SVG Map -->
       <section class="glass-card map-card">

@@ -204,10 +204,20 @@ header {
 /* ── Main Content Area ───────────────────────────────────── */
 main {
   flex: 1;
-  padding: 0 16px 40px;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  position: relative;
+  z-index: 1;
+}
+.control-panels {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0 16px;
+}
+.control-panels.hidden {
+  display: none;
 }
 
 /* ── Glass Card ──────────────────────────────────────────── */
@@ -811,14 +821,21 @@ footer a:hover { text-decoration: underline; }
    TALK TO STAFF — Fan-to-Staff Translator
    ============================================================ */
 
-/* ── Staff Card Shell ─────────────────────────────────────── */
-.staff-card {
+/* ── SVG Map Card ────────────────────────────────────────── */
+.map-card {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  /* Accent border to distinguish from routing cards */
-  border-color: rgba(255, 215, 0, 0.18);
-  background: rgba(18, 16, 38, 0.80);
+  gap: 12px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 16px;
+}
+
+/* ── Staff Card Shell ─────────────────────────────────────── */
+.staff-card {
+  display: none;
 }
 
 /* ── Staff Header ─────────────────────────────────────────── */

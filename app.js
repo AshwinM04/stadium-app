@@ -3,7 +3,7 @@
 //  Frontend Logic & Offline Routing Engine
 // ============================================================
 
-const BACKEND_URL = 'http://localhost:5000';
+const BACKEND_URL = '';
 
 // ── Multi-Stadium Configuration Database ──────────────────
 const STADIUM_CONFIGS = {
@@ -1504,6 +1504,15 @@ function switchStadium(id) {
 
 // ── App Initialisation ─────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
+  // Toggle Search Panel
+  const toggleBtn = document.getElementById('toggle-search-btn');
+  const controlPanels = document.getElementById('control-panels');
+  if (toggleBtn && controlPanels) {
+    toggleBtn.addEventListener('click', () => {
+      controlPanels.classList.toggle('hidden');
+    });
+  }
+
   setupSearchableInput();
   drawStadiumSVG();
   triggerMapUpdate();
