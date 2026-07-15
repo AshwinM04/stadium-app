@@ -3,6 +3,9 @@ import asyncio
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from dotenv import load_dotenv
+import logging
+
+logging.basicConfig(level=logging.ERROR)
 
 # Load env variables from .env
 load_dotenv()
@@ -130,7 +133,7 @@ def get_directions():
             
         return clean_text, 200, {'Content-Type': 'application/json'}
     except Exception as e:
-        print(f"Error querying Antigravity Agent: {e}")
+        logging.error(f"API Error (Antigravity Agent): {str(e)}", exc_info=True)
         return jsonify({
             "error": "The AI is currently busy. Please wait a moment or use the interactive map."
         }), 200
@@ -177,7 +180,10 @@ def chat():
             text = result.get('candidates', [{}])[0].get('content', {}).get('parts', [{}])[0].get('text', '')
             return jsonify({"text": text}), 200
     except Exception as e:
-        print(f"Error querying Gemini API: {e}")
+        logging.error(f"API Error (Gemini API): {str(e)}", exc_info=True)
+        # If it's an HTTPError, try to read the body for more details
+        if hasattr(e, 'read'):
+            logging.error(f"Response body: {e.read().decode('utf-8')}")
         return jsonify({"error": "The AI is currently busy. Please wait a moment or use the interactive map."}), 200
 
 if __name__ == '__main__':
