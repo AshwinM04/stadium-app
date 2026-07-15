@@ -1528,7 +1528,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
 // ── API Configuration ────────────────────────────────────────────────
 // The AI Chat is securely routed through our Python backend.
-const BACKEND_CHAT_URL = 'http://localhost:5000/api/chat';
+const BACKEND_CHAT_URL = '/api/chat';
+let lastUserQuery = '';
 
 // ── DOM References (AI Chat) ──────────────────────────────────────
 // These are wired once DOMContentLoaded fires (see initAIChat below).
@@ -1708,6 +1709,8 @@ function removeTypingIndicator() {
 async function askGenAI(userQuery) {
   if (!userQuery || !userQuery.trim()) return;
 
+  lastUserQuery = userQuery;
+
   // 1. Show user bubble immediately
   renderAIMessage('user', userQuery);
 
@@ -1772,6 +1775,16 @@ function initAIChat() {
   aiSendBtn     = document.getElementById('ai-send-btn');
   aiStatusPill  = document.getElementById('ai-status-pill');
   aiStatusLabel = document.getElementById('ai-status-label');
+
+  if (aiStatusPill) {
+    aiStatusPill.addEventListener('click', () => {
+      if (aiStatusPill.classList.contains('ai-status-error') && lastUserQuery) {
+        // Optionally clear the error state and retry
+        setAIStatus('idle');
+        askGenAI(lastUserQuery);
+      }
+    });
+  }
 
   if (!aiSendBtn || !aiInput) return;
 

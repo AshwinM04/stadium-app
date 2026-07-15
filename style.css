@@ -1142,6 +1142,7 @@ footer a:hover { text-decoration: underline; }
   background: rgba(255, 51, 102, 0.08);
   border-color: rgba(255, 51, 102, 0.3);
   color: var(--accent-red);
+  cursor: pointer;
 }
 .ai-status-error .ai-status-dot {
   background: var(--accent-red);
