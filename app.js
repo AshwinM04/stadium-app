@@ -428,108 +428,108 @@ function applyUILocale(lang) {
 const STAFF_PHRASES = {
   emergency: [
     {
-      icon: '🚨',
+      icon: 'ph-siren',
       fan:  { en: 'I need emergency help!',    es: '¡Necesito ayuda de emergencia!', fr: 'J\'ai besoin d\'aide d\'urgence !', de: 'Ich brauche Notfallhilfe!',     pt: 'Preciso de ajuda de emergência!', ja: '緊急の助けが必要です！' },
       spoken: { en: 'Emergency! This person needs immediate help!', es: '¡Emergencia! ¡Esta persona necesita ayuda inmediata!', fr: 'Urgence ! Cette personne a besoin d\'aide immédiate !', de: 'Notfall! Diese Person braucht sofortige Hilfe!', pt: 'Emergência! Esta pessoa precisa de ajuda imediata!', ja: '緊急事態！この方は今すぐ助けが必要です！' }
     },
     {
-      icon: '🏥',
+      icon: 'ph-first-aid-kit',
       fan:  { en: 'Someone is injured.',       es: 'Alguien está herido.',           fr: 'Quelqu\'un est blessé.',          de: 'Jemand ist verletzt.',           pt: 'Alguém está machucado.',          ja: 'けがをした人がいます。' },
       spoken: { en: 'Someone is injured and needs medical attention.', es: 'Alguien está herido y necesita atención médica.', fr: 'Quelqu\'un est blessé et a besoin de soins médicaux.', de: 'Jemand ist verletzt und braucht medizinische Hilfe.', pt: 'Alguém está machucado e precisa de atenção médica.', ja: 'けがをした方がいます。医療処置が必要です。' }
     },
     {
-      icon: '👮',
+      icon: 'ph-shield-check',
       fan:  { en: 'Please call security.',     es: 'Por favor, llame a seguridad.',  fr: 'Appelez la sécurité, s\'il vous plaît.', de: 'Bitte rufen Sie den Sicherheitsdienst.',  pt: 'Por favor, chame a segurança.',   ja: '警備員を呼んでください。' },
       spoken: { en: 'Please call security immediately.', es: 'Por favor, llame a seguridad inmediatamente.', fr: 'Appelez la sécurité immédiatement, s\'il vous plaît.', de: 'Bitte rufen Sie sofort den Sicherheitsdienst.', pt: 'Por favor, chame a segurança imediatamente.', ja: '今すぐ警備員を呼んでください。' }
     },
     {
-      icon: '🔥',
+      icon: 'ph-fire',
       fan:  { en: 'There is a fire!',          es: '¡Hay un incendio!',              fr: 'Il y a un incendie !',            de: 'Es gibt ein Feuer!',             pt: 'Há um incêndio!',                 ja: '火事です！' },
       spoken: { en: 'Fire! Please evacuate the area immediately!', es: '¡Incendio! ¡Por favor evacúen el área inmediatamente!', fr: 'Incendie ! Évacuez la zone immédiatement !', de: 'Feuer! Bitte sofort die Gegend evakuieren!', pt: 'Fogo! Por favor, evacue a área imediatamente!', ja: '火事です！今すぐこの場所を避難してください！' }
     },
     {
-      icon: '👶',
+      icon: 'ph-baby',
       fan:  { en: 'I lost a child.',           es: 'Perdí a un niño.',               fr: 'J\'ai perdu un enfant.',          de: 'Ich habe ein Kind verloren.',    pt: 'Perdi uma criança.',              ja: '子どもとはぐれました。' },
       spoken: { en: 'A child is lost. Please help find them.', es: 'Un niño está perdido. Por favor, ayude a encontrarlo.', fr: 'Un enfant est perdu. Aidez à le retrouver, s\'il vous plaît.', de: 'Ein Kind ist verloren. Bitte helfen Sie es zu finden.', pt: 'Uma criança está perdida. Por favor, ajude a encontrá-la.', ja: '子どもがいなくなりました。見つけるのを手伝ってください。' }
     }
   ],
   navigation: [
     {
-      icon: '🚻',
+      icon: 'ph-toilet',
       fan:  { en: 'Where is the restroom?',    es: '¿Dónde está el baño?',          fr: 'Où sont les toilettes ?',         de: 'Wo ist die Toilette?',           pt: 'Onde fica o banheiro?',           ja: 'トイレはどこですか？' },
       spoken: { en: 'Where is the nearest restroom, please?', es: '¿Dónde está el baño más cercano, por favor?', fr: 'Où sont les toilettes les plus proches, s\'il vous plaît ?', de: 'Wo ist die nächste Toilette, bitte?', pt: 'Onde fica o banheiro mais próximo, por favor?', ja: '最寄りのトイレはどこですか？' }
     },
     {
-      icon: '🚪',
+      icon: 'ph-door',
       fan:  { en: 'Where is the main gate?',   es: '¿Dónde está la puerta principal?', fr: 'Où est l\'entrée principale ?', de: 'Wo ist der Haupteingang?',       pt: 'Onde fica o portão principal?',   ja: 'メインゲートはどこですか？' },
       spoken: { en: 'Where is the main gate, please?', es: '¿Dónde está la puerta principal, por favor?', fr: 'Où est l\'entrée principale, s\'il vous plaît ?', de: 'Wo ist der Haupteingang, bitte?', pt: 'Onde fica o portão principal, por favor?', ja: 'メインゲートはどこですか？' }
     },
     {
-      icon: '💺',
+      icon: 'ph-armchair',
       fan:  { en: 'Please help me find my seat.', es: 'Ayúdame a encontrar mi asiento.', fr: 'Aidez-moi à trouver mon siège.', de: 'Helfen Sie mir meinen Platz zu finden.', pt: 'Por favor, me ajude a encontrar meu assento.', ja: '席を見つけるのを手伝ってください。' },
       spoken: { en: 'Please help this person find their seat.', es: 'Por favor, ayude a esta persona a encontrar su asiento.', fr: 'Aidez cette personne à trouver son siège, s\'il vous plaît.', de: 'Bitte helfen Sie dieser Person ihren Platz zu finden.', pt: 'Por favor, ajude esta pessoa a encontrar seu assento.', ja: 'この方の席を見つけるのを手伝ってください。' }
     },
     {
-      icon: '🅿️',
+      icon: 'ph-car',
       fan:  { en: 'Where is the parking exit?', es: '¿Dónde está la salida del estacionamiento?', fr: 'Où est la sortie de parking ?', de: 'Wo ist der Parkausgang?',     pt: 'Onde fica a saída do estacionamento?', ja: '駐車場の出口はどこですか？' },
       spoken: { en: 'Where is the nearest parking exit?', es: '¿Dónde está la salida de estacionamiento más cercana?', fr: 'Où est la sortie de parking la plus proche ?', de: 'Wo ist der nächste Parkausgang?', pt: 'Onde fica a saída do estacionamento mais próxima?', ja: '最寄りの駐車場出口はどこですか？' }
     },
     {
-      icon: '♿',
+      icon: 'ph-wheelchair',
       fan:  { en: 'I need wheelchair access.',  es: 'Necesito acceso para silla de ruedas.', fr: 'J\'ai besoin d\'un accès fauteuil roulant.', de: 'Ich brauche Rollstuhlzugang.', pt: 'Preciso de acesso para cadeira de rodas.', ja: '車いす対応の入口が必要です。' },
       spoken: { en: 'This person requires wheelchair-accessible access or seating.', es: 'Esta persona necesita acceso o asiento para silla de ruedas.', fr: 'Cette personne a besoin d\'un accès ou d\'une place accessible en fauteuil roulant.', de: 'Diese Person benötigt rollstuhlgerechten Zugang oder Sitzplatz.', pt: 'Esta pessoa precisa de acesso ou assento acessível para cadeira de rodas.', ja: 'この方は車いす対応の通路または席が必要です。' }
     }
   ],
   needs: [
     {
-      icon: '💧',
+      icon: 'ph-drop',
       fan:  { en: 'I need water.',              es: 'Necesito agua.',                 fr: 'J\'ai besoin d\'eau.',            de: 'Ich brauche Wasser.',            pt: 'Preciso de água.',                ja: '水が必要です。' },
       spoken: { en: 'This person needs water, please.', es: 'Esta persona necesita agua, por favor.', fr: 'Cette personne a besoin d\'eau, s\'il vous plaît.', de: 'Diese Person braucht Wasser, bitte.', pt: 'Esta pessoa precisa de água, por favor.', ja: 'この方に水が必要です。お願いします。' }
     },
     {
-      icon: '🍔',
+      icon: 'ph-hamburger',
       fan:  { en: 'Where can I buy food?',      es: '¿Dónde puedo comprar comida?',  fr: 'Où puis-je acheter à manger ?',  de: 'Wo kann ich Essen kaufen?',      pt: 'Onde posso comprar comida?',      ja: '食べ物はどこで買えますか？' },
       spoken: { en: 'Where can I buy food nearby?', es: '¿Dónde puedo comprar comida cerca de aquí?', fr: 'Où puis-je acheter à manger à proximité ?', de: 'Wo kann ich hier in der Nähe Essen kaufen?', pt: 'Onde posso comprar comida perto daqui?', ja: '近くで食べ物を買えるのはどこですか？' }
     },
     {
-      icon: '🛍️',
+      icon: 'ph-shopping-bag',
       fan:  { en: 'Where is the FIFA shop?',    es: '¿Dónde está la tienda FIFA?',   fr: 'Où est la boutique FIFA ?',      de: 'Wo ist der FIFA-Shop?',          pt: 'Onde fica a loja FIFA?',           ja: 'FIFA ショップはどこですか？' },
       spoken: { en: 'Where is the official FIFA merchandise shop?', es: '¿Dónde está la tienda oficial de FIFA?', fr: 'Où est la boutique officielle FIFA ?', de: 'Wo ist der offizielle FIFA-Fanshop?', pt: 'Onde fica a loja oficial de produtos da FIFA?', ja: 'FIFA の公式グッズショップはどこですか？' }
     },
     {
-      icon: '📶',
+      icon: 'ph-wifi-high',
       fan:  { en: 'Is there free Wi-Fi here?',  es: '¿Hay Wi-Fi gratuito aquí?',     fr: 'Y a-t-il du Wi-Fi gratuit ici ?', de: 'Gibt es hier kostenloses WLAN?', pt: 'Tem Wi-Fi gratuito aqui?',        ja: '無料 Wi-Fi はありますか？' },
       spoken: { en: 'Is there free Wi-Fi available in this area?', es: '¿Hay Wi-Fi gratuito disponible en esta área?', fr: 'Y a-t-il du Wi-Fi gratuit disponible dans cette zone ?', de: 'Gibt es in diesem Bereich kostenloses WLAN?', pt: 'Tem Wi-Fi gratuito disponível nessa área?', ja: 'この場所に無料 Wi-Fi はありますか？' }
     },
     {
-      icon: '💊',
+      icon: 'ph-pill',
       fan:  { en: 'I need medicine / pharmacy.', es: 'Necesito medicina / farmacia.', fr: 'J\'ai besoin d\'un médicament / pharmacie.', de: 'Ich brauche Medizin / Apotheke.', pt: 'Preciso de medicina / farmácia.', ja: '薬 / 薬局が必要です。' },
       spoken: { en: 'This person needs medicine or access to a pharmacy.', es: 'Esta persona necesita medicamentos o acceso a una farmacia.', fr: 'Cette personne a besoin de médicaments ou d\'une pharmacie.', de: 'Diese Person braucht Medikamente oder Zugang zu einer Apotheke.', pt: 'Esta pessoa precisa de medicamentos ou de uma farmácia.', ja: 'この方は薬または薬局が必要です。' }
     }
   ],
   courtesy: [
     {
-      icon: '🙏',
+      icon: 'ph-hands-praying',
       fan:  { en: 'Thank you very much!',       es: '¡Muchas gracias!',               fr: 'Merci beaucoup !',               de: 'Vielen Dank!',                   pt: 'Muito obrigado!',                 ja: 'どうもありがとうございます！' },
       spoken: { en: 'Thank you very much!', es: '¡Muchas gracias!', fr: 'Merci beaucoup !', de: 'Vielen Dank!', pt: 'Muito obrigado!', ja: 'どうもありがとうございます！' }
     },
     {
-      icon: '😊',
+      icon: 'ph-smiley',
       fan:  { en: 'You are very helpful!',      es: '¡Eres de mucha ayuda!',          fr: 'Vous êtes très serviable !',     de: 'Sie sind sehr hilfsbereit!',     pt: 'Você é muito prestativo!',        ja: 'とても助かりました！' },
       spoken: { en: 'You are very helpful, thank you!', es: '¡Eres muy servicial, muchas gracias!', fr: 'Vous êtes très serviable, merci !', de: 'Sie sind sehr hilfsbereit, vielen Dank!', pt: 'Você é muito prestativo, muito obrigado!', ja: 'とても助かりました。ありがとうございます！' }
     },
     {
-      icon: '❓',
+      icon: 'ph-question',
       fan:  { en: 'I don\'t understand.',        es: 'No entiendo.',                   fr: 'Je ne comprends pas.',           de: 'Ich verstehe nicht.',            pt: 'Não entendo.',                    ja: 'わかりません。' },
       spoken: { en: 'I\'m sorry, I don\'t understand. Could you help me?', es: 'Lo siento, no entiendo. ¿Puede ayudarme?', fr: 'Je suis désolé, je ne comprends pas. Pouvez-vous m\'aider ?', de: 'Entschuldigung, ich verstehe nicht. Können Sie mir helfen?', pt: 'Desculpe, não entendo. Pode me ajudar?', ja: 'すみません、わかりません。助けていただけますか？' }
     },
     {
-      icon: '🌍',
+      icon: 'ph-globe',
       fan:  { en: 'Do you speak English?',      es: '¿Habla inglés?',                 fr: 'Parlez-vous anglais ?',          de: 'Sprechen Sie Englisch?',         pt: 'Você fala inglês?',               ja: '英語は話せますか？' },
       spoken: { en: 'Do you speak English?', es: '¿Habla inglés?', fr: 'Parlez-vous anglais ?', de: 'Sprechen Sie Englisch?', pt: 'Você fala inglês?', ja: '英語は話せますか？' }
     },
     {
-      icon: '📸',
+      icon: 'ph-camera',
       fan:  { en: 'Can you take a photo of us?', es: '¿Puede tomarnos una foto?',    fr: 'Pouvez-vous nous prendre en photo ?', de: 'Können Sie ein Foto von uns machen?', pt: 'Você pode tirar uma foto de nós?', ja: '写真を撮っていただけますか？' },
       spoken: { en: 'Could you please take a photo of us?', es: '¿Podría tomarnos una foto, por favor?', fr: 'Pourriez-vous nous prendre en photo, s\'il vous plaît ?', de: 'Könnten Sie bitte ein Foto von uns machen?', pt: 'Você poderia tirar uma foto de nós, por favor?', ja: '写真を撮っていただけますか？' }
     }
@@ -561,13 +561,12 @@ function renderStaffPhrases(cat) {
     const spokenText = phrase.spoken[staffLang.slice(0, 2)] || phrase.spoken.en;
 
     btn.innerHTML = `
-      <span class="phrase-icon">${phrase.icon}</span>
+      <i class="ph ${phrase.icon} phrase-icon"></i>
       <div class="phrase-text-wrap">
         <span class="phrase-fan-text">${fanText}</span>
-        <span class="phrase-staff-text">${spokenText}</span>
       </div>
       <span class="phrase-play-icon">
-        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        <i class="ph-fill ph-speaker-high" style="font-size: 1.2rem;"></i>
       </span>`;
 
     btn.addEventListener('click', () => speakStaffPhrase(btn, spokenText, staffLang));
@@ -785,6 +784,8 @@ function drawStadiumSVG() {
     path.setAttribute('d', d);
     path.setAttribute('class', 'section-slice');
     path.setAttribute('data-section', textVal);
+    path.setAttribute('fill', 'rgba(255,255,255,0.02)');
+    path.setAttribute('stroke', 'rgba(255,255,255,0.05)');
     path.addEventListener('click', () => {
       const startLoc   = getStartLocation();
       const levelDigit = Math.floor(startLoc.level / 100);
@@ -862,37 +863,47 @@ function drawStadiumSVG() {
     g.setAttribute('class', 'facility-node');
     g.setAttribute('id', `node_${fac.id}`);
 
-    const colorMap = { bathroom: '#00e676', food: '#ffd700', firstaid: '#ff3366', merch: '#ff007f' };
-    const emojiMap = { bathroom: '🚻', food: '🍔', firstaid: '🏥', merch: '🛍️' };
-    const color = colorMap[fac.category] || '#7c4dff';
-    const emoji = emojiMap[fac.category] || '📍';
+    const colorMap = { bathroom: '#1E90FF', food: '#1E90FF', firstaid: '#EF4444', merch: '#1E90FF' };
+    const phIconMap = { bathroom: 'ph-toilet', food: 'ph-hamburger', firstaid: 'ph-first-aid-kit', merch: 'ph-shopping-bag' };
+    const color = colorMap[fac.category] || '#1E90FF';
+    const phClass = phIconMap[fac.category] || 'ph-map-pin';
 
     const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     circle.setAttribute('cx', coords.x);
     circle.setAttribute('cy', coords.y);
-    circle.setAttribute('r', '4.5');
-    circle.setAttribute('fill', 'rgba(15,14,28,0.92)');
+    circle.setAttribute('r', '8');
+    circle.setAttribute('fill', '#16161A');
     circle.setAttribute('stroke', color);
     circle.setAttribute('stroke-width', '1');
     g.appendChild(circle);
 
-    const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    txt.setAttribute('x', coords.x);
-    txt.setAttribute('y', coords.y);
-    txt.setAttribute('class', 'facility-icon-text');
-    txt.setAttribute('text-anchor', 'middle');
-    txt.setAttribute('dominant-baseline', 'central');
-    txt.textContent = emoji;
-    g.appendChild(txt);
+    const fo = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
+    fo.setAttribute('x', coords.x - 8);
+    fo.setAttribute('y', coords.y - 8);
+    fo.setAttribute('width', 16);
+    fo.setAttribute('height', 16);
+
+    const i = document.createElement('i');
+    i.className = `ph ${phClass}`;
+    i.style.color = color;
+    i.style.fontSize = '12px';
+    i.style.display = 'flex';
+    i.style.justifyContent = 'center';
+    i.style.alignItems = 'center';
+    i.style.width = '100%';
+    i.style.height = '100%';
+    
+    fo.appendChild(i);
+    g.appendChild(fo);
 
     g.addEventListener('click', () => {
       // Highlight selection
       document.querySelectorAll('.facility-node circle').forEach(c => {
         c.setAttribute('stroke-width', '1');
-        c.setAttribute('fill', 'rgba(15,14,28,0.92)');
+        c.setAttribute('fill', '#16161A');
       });
-      circle.setAttribute('stroke-width', '3');
-      circle.setAttribute('fill', color);
+      circle.setAttribute('stroke-width', '2');
+      circle.setAttribute('fill', 'rgba(30,144,255,0.2)');
 
       // Open Search overlay
       const controlPanels = document.getElementById('control-panels');

@@ -6,12 +6,12 @@
 
 /* ── Design Tokens ───────────────────────────────────────── */
 :root {
-  --bg-primary:        #000000;
-  --bg-secondary:      #0a0a0a;
-  --bg-surface:        rgba(30, 30, 30, 0.85);
-  --bg-surface-hover:  rgba(45, 45, 45, 0.85);
-  --border-color:      rgba(255, 255, 255, 0.12);
-  --border-focus:      rgba(57, 255, 20, 0.5);
+  --bg-primary:        #0A0A0C;
+  --bg-secondary:      #0A0A0C;
+  --bg-surface:        #16161A;
+  --bg-surface-hover:  #1c1c21;
+  --border-color:      transparent;
+  --border-focus:      rgba(30, 144, 255, 0.5);
 
   --text-primary:   #ffffff;
   --text-secondary: #a3a3c2;
@@ -223,16 +223,16 @@ main {
 /* ── Glass Card ──────────────────────────────────────────── */
 .glass-card {
   background: var(--bg-surface);
-  border: 1px solid var(--border-color);
-  border-radius: 16px;
-  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  padding: 24px;
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
-  box-shadow: var(--shadow-main);
-  transition: border-color 0.2s ease;
+  box-shadow: none;
+  transition: background-color 0.2s ease;
 }
 
-.glass-card:hover { border-color: rgba(255,255,255,0.12); }
+.glass-card:hover { background-color: var(--bg-surface-hover); }
 
 /* ── Location Selector Card ──────────────────────────────── */
 .location-selector {
@@ -833,11 +833,11 @@ footer a:hover { text-decoration: underline; }
 .staff-card {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
   background: var(--bg-surface);
-  border: 1px solid var(--border-color);
-  border-radius: 20px;
-  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  padding: 24px;
 }
 
 /* ── Staff Header ─────────────────────────────────────────── */

@@ -7,6 +7,7 @@
   <meta name="theme-color" content="#080710">
   <title>Global Fan Concierge – FIFA World Cup 2026</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
 <body>
   <div class="app-container">
@@ -46,7 +47,7 @@
 
       <div class="header-actions-row" style="display: flex; gap: 8px; justify-content: center; padding-bottom: 12px; z-index: 100;">
         <button id="toggle-search-btn" class="status-badge" style="background: var(--accent-green); color: #000; border: none; font-weight: bold;">
-          🔍 Search & Navigate
+          <i class="ph ph-map-trifold"></i> Search & Navigate
         </button>
       </div>
 
@@ -121,19 +122,19 @@
         <!-- Quick-access category badges -->
         <div class="categories-wrapper">
           <div class="category-badge bathroom-badge" data-category="bathroom">
-            <span class="category-icon">🚻</span><span data-i18n="badgeRestrooms">Restrooms</span>
+            <i class="ph ph-toilet" style="font-size: 1.2rem;"></i><span data-i18n="badgeRestrooms">Restrooms</span>
           </div>
           <div class="category-badge food-badge" data-category="food">
-            <span class="category-icon">🍔</span><span data-i18n="badgeFood">Food &amp; Drinks</span>
+            <i class="ph ph-hamburger" style="font-size: 1.2rem;"></i><span data-i18n="badgeFood">Food &amp; Drinks</span>
           </div>
           <div class="category-badge merch-badge" data-category="merch">
-            <span class="category-icon">🛍️</span><span data-i18n="badgeMerch">FIFA Store</span>
+            <i class="ph ph-shopping-bag" style="font-size: 1.2rem;"></i><span data-i18n="badgeMerch">FIFA Store</span>
           </div>
           <div class="category-badge aid-badge" data-category="firstaid">
-            <span class="category-icon">🏥</span><span data-i18n="badgeFirstAid">First Aid</span>
+            <i class="ph ph-first-aid-kit" style="color: var(--accent-red); font-size: 1.2rem;"></i><span data-i18n="badgeFirstAid">First Aid</span>
           </div>
           <div class="category-badge gate-badge" data-category="gate">
-            <span class="category-icon">🚪</span><span data-i18n="badgeGates">Gates</span>
+            <i class="ph ph-door" style="font-size: 1.2rem;"></i><span data-i18n="badgeGates">Gates</span>
           </div>
         </div>
 
@@ -231,7 +232,7 @@
 
       <!-- AI Chat FAB -->
       <button id="ai-fab" class="ai-fab" aria-label="Open AI Chat">
-        <span class="ai-spark">💬</span> Ask AI
+        <i class="ph-fill ph-chat-circle-text"></i> Ask AI
       </button>
 
       <!-- ⑦ GenAI Concierge Chat (Bottom Sheet) -->
@@ -242,7 +243,7 @@
         <!-- Card header -->
         <div class="ai-chat-header">
           <div class="ai-chat-title-row">
-            <span class="ai-spark">✨</span>
+            <i class="ph-fill ph-chat-circle-text" style="font-size: 1.5rem; color: var(--accent-green);"></i>
             <div>
               <h2 class="ai-chat-title" data-i18n="aiChatTitle">AI Stadium Concierge</h2>
               <p class="ai-chat-subtitle" data-i18n="aiChatSubtitle">Ask anything about the stadium — powered by Gemini</p>
@@ -263,7 +264,7 @@
         <div id="ai-thread" class="ai-thread" aria-live="polite" aria-label="AI conversation">
           <!-- Welcome bubble -->
           <div class="ai-bubble ai-bubble-bot">
-            <span class="ai-bubble-avatar">🤖</span>
+            <i class="ph-fill ph-robot ai-bubble-avatar" style="font-size: 1.5rem; color: var(--accent-green);"></i>
             <div class="ai-bubble-body">
               <p class="ai-bubble-text" data-i18n="aiWelcome">Hi! I'm your AI Stadium Concierge. Ask me anything — food recommendations, gate directions, rules, accessibility, or anything else about your experience today.</p>
             </div>
@@ -293,25 +294,24 @@
       <section class="glass-card staff-card">
         <div class="staff-header">
           <div class="staff-title-row">
-            <span class="staff-megaphone">📣</span>
+            <i class="ph-fill ph-megaphone" style="font-size: 1.5rem; color: var(--accent-green);"></i>
             <div>
               <h2 class="staff-title" data-i18n="staffTitle">Talk to Staff</h2>
-              <p class="staff-subtitle" data-i18n="staffSubtitle">Tap a phrase — it plays aloud in the stadium's language so any worker can hear it.</p>
             </div>
           </div>
           <!-- Stadium language badge -->
           <div class="staff-lang-badge" id="staff-lang-badge">
-            <span id="staff-lang-flag">🇺🇸</span>
+            <i class="ph ph-globe"></i>
             <span id="staff-lang-name">English</span>
           </div>
         </div>
 
         <!-- Phrase categories tabs -->
         <div class="staff-tabs" id="staff-tabs">
-          <button class="staff-tab active" data-staff-cat="emergency" data-i18n="staffTabEmergency">🆘 Emergency</button>
-          <button class="staff-tab" data-staff-cat="navigation" data-i18n="staffTabNavigation">🗺️ Navigation</button>
-          <button class="staff-tab" data-staff-cat="needs" data-i18n="staffTabNeeds">🛎️ Needs</button>
-          <button class="staff-tab" data-staff-cat="courtesy" data-i18n="staffTabCourtesy">🤝 Courtesy</button>
+          <button class="staff-tab active" data-staff-cat="emergency" data-i18n="staffTabEmergency"><i class="ph ph-warning-circle" style="color: var(--accent-red)"></i> Emergency</button>
+          <button class="staff-tab" data-staff-cat="navigation" data-i18n="staffTabNavigation"><i class="ph ph-map-trifold"></i> Navigation</button>
+          <button class="staff-tab" data-staff-cat="needs" data-i18n="staffTabNeeds"><i class="ph ph-bell-ringing"></i> Needs</button>
+          <button class="staff-tab" data-staff-cat="courtesy" data-i18n="staffTabCourtesy"><i class="ph ph-handshake"></i> Courtesy</button>
         </div>
 
         <!-- Phrase buttons (filled by JS per active tab) -->
