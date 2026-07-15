@@ -560,8 +560,16 @@ function renderStaffPhrases(cat) {
     // Text to speak (in the stadium's primary language for staff to understand)
     const spokenText = phrase.spoken[staffLang.slice(0, 2)] || phrase.spoken.en;
 
+    const staffColorMap = {
+      emergency: '#EF4444',
+      navigation: '#1E90FF',
+      needs: '#FFB020',
+      courtesy: '#FFFFFF'
+    };
+    const iconColor = staffColorMap[cat] || '#FFFFFF';
+
     btn.innerHTML = `
-      <i class="ph ${phrase.icon} phrase-icon"></i>
+      <i class="ph ${phrase.icon} phrase-icon" style="font-size: 22px; color: ${iconColor};"></i>
       <div class="phrase-text-wrap">
         <span class="phrase-fan-text">${fanText}</span>
       </div>
@@ -863,7 +871,7 @@ function drawStadiumSVG() {
     g.setAttribute('class', 'facility-node');
     g.setAttribute('id', `node_${fac.id}`);
 
-    const colorMap = { bathroom: '#1E90FF', food: '#1E90FF', firstaid: '#EF4444', merch: '#1E90FF' };
+    const colorMap = { bathroom: '#1E90FF', food: '#FFB020', firstaid: '#EF4444', merch: '#FFFFFF' };
     const phIconMap = { bathroom: 'ph-toilet', food: 'ph-hamburger', firstaid: 'ph-first-aid-kit', merch: 'ph-shopping-bag' };
     const color = colorMap[fac.category] || '#1E90FF';
     const phClass = phIconMap[fac.category] || 'ph-map-pin';
@@ -871,22 +879,21 @@ function drawStadiumSVG() {
     const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     circle.setAttribute('cx', coords.x);
     circle.setAttribute('cy', coords.y);
-    circle.setAttribute('r', '8');
-    circle.setAttribute('fill', '#16161A');
-    circle.setAttribute('stroke', color);
-    circle.setAttribute('stroke-width', '1');
+    circle.setAttribute('r', '10');
+    circle.setAttribute('fill', color);
+    circle.setAttribute('stroke', 'none');
     g.appendChild(circle);
 
     const fo = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
-    fo.setAttribute('x', coords.x - 8);
-    fo.setAttribute('y', coords.y - 8);
-    fo.setAttribute('width', 16);
-    fo.setAttribute('height', 16);
+    fo.setAttribute('x', coords.x - 10);
+    fo.setAttribute('y', coords.y - 10);
+    fo.setAttribute('width', 20);
+    fo.setAttribute('height', 20);
 
     const i = document.createElement('i');
     i.className = `ph ${phClass}`;
-    i.style.color = color;
-    i.style.fontSize = '12px';
+    i.style.color = '#0A0A0C';
+    i.style.fontSize = '14px';
     i.style.display = 'flex';
     i.style.justifyContent = 'center';
     i.style.alignItems = 'center';
@@ -899,11 +906,10 @@ function drawStadiumSVG() {
     g.addEventListener('click', () => {
       // Highlight selection
       document.querySelectorAll('.facility-node circle').forEach(c => {
-        c.setAttribute('stroke-width', '1');
-        c.setAttribute('fill', '#16161A');
+        c.setAttribute('stroke', 'none');
       });
+      circle.setAttribute('stroke', '#FFFFFF');
       circle.setAttribute('stroke-width', '2');
-      circle.setAttribute('fill', 'rgba(30,144,255,0.2)');
 
       // Open Search overlay
       const controlPanels = document.getElementById('control-panels');
