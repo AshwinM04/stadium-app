@@ -755,9 +755,10 @@ function findNearestMagneticAmenity(level, clickCoords) {
   STADIUM_DATA.facilities.filter(f => f.level === level).forEach(f => {
     const fc = getStadiumCoords(f.section, f.level);
     const d = Math.sqrt((fc.x - clickCoords.x) ** 2 + (fc.y - clickCoords.y) ** 2);
-    if (d <= 30 && d < nearestDist) {
+    if (d <= 12 && d < nearestDist) {
       nearestDist = d;
-      nearestQuery = `${getCategoryLabel(f.category)}: ${f.shortName}`;
+      const label = getCategoryLabel(f.category);
+      nearestQuery = label === f.shortName ? f.shortName : `${label}: ${f.shortName}`;
       amenityCoords = { x: fc.x, y: fc.y };
       amenitySection = f.section;
     }

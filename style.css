@@ -411,6 +411,8 @@ main {
   background: rgba(255,255,255,0.03);
   border: 1px solid var(--border-color);
   padding: 8px 14px;
+  margin-top: 4px !important;
+  margin-bottom: 4px !important;
   border-radius: 20px;
   font-size: 13px;
   font-weight: 500;
