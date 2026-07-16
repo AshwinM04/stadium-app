@@ -806,6 +806,18 @@ function drawStadiumSVG() {
       }
 
       const startLoc   = getStartLocation();
+      if (!startLoc) {
+        // Set start location on first tap
+        let nearestDist = Infinity;
+        let nearestSec = 101;
+        for (let s = 1; s <= 48; s++) {
+          const sc = getStadiumCoords(100 + s, 100);
+          const d = Math.sqrt((sc.x - exactDest.x) ** 2 + (sc.y - exactDest.y) ** 2);
+          if (d < nearestDist) { nearestDist = d; nearestSec = 100 + s; }
+        }
+        updateUIStartLocation(nearestSec, 100);
+        return;
+      }
       
       let nearestDist = Infinity;
       let nearestQuery = '';
@@ -1037,6 +1049,8 @@ function getStartLocation() {
   const lvlVal = startLevelInput.value;
   const secVal = startSectionInput.value.trim();
 
+  if (!lvlVal || !secVal) return null;
+
   let levelNum = 100;
   if (lvlVal.includes('200')) levelNum = 200;
   else if (lvlVal.includes('300')) levelNum = 300;
@@ -1067,9 +1081,15 @@ function updateUIStartLocation(sectionVal, levelNum) {
 // ── Map pin update ──────────────────────────────────────────
 function triggerMapUpdate() {
   const loc = getStartLocation();
-  const c   = getStadiumCoords(loc.section, loc.level);
-  document.getElementById('start-pin').setAttribute('cx', c.x);
-  document.getElementById('start-pin').setAttribute('cy', c.y);
+  const startPin = document.getElementById('start-pin');
+  if (loc) {
+    const c = getStadiumCoords(loc.section, loc.level);
+    startPin.setAttribute('cx', c.x);
+    startPin.setAttribute('cy', c.y);
+  } else {
+    startPin.setAttribute('cx', '-20');
+    startPin.setAttribute('cy', '-20');
+  }
   drawStadiumSVG();
 }
 
@@ -1594,8 +1614,8 @@ function switchStadium(id) {
   const endPin = document.getElementById('end-pin');
   if (endPin)   { endPin.setAttribute('cx', '-20'); endPin.setAttribute('cy', '-20'); }
 
-  startLevelInput.value   = '100-Level (Lower)';
-  startSectionInput.value = 'Section 101';
+  startLevelInput.value   = '';
+  startSectionInput.value = '';
 
   setupSearchableInput();
   drawStadiumSVG();

@@ -42,7 +42,7 @@
 
 /* ── Body & App Shell ────────────────────────────────────── */
 body {
-  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   background-color: var(--bg-primary);
   background-image: none;
   background-attachment: fixed;
@@ -52,7 +52,7 @@ body {
   justify-content: center;
   align-items: flex-start;
   overflow-x: hidden;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 .app-container {
@@ -222,17 +222,17 @@ main {
 
 /* ── Glass Card ──────────────────────────────────────────── */
 .glass-card {
-  background: var(--bg-surface);
-  border: none;
-  border-radius: 12px;
+  background: rgba(22, 22, 26, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
   padding: 24px;
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  box-shadow: none;
-  transition: background-color 0.2s ease;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  transition: all 0.2s ease;
 }
 
-.glass-card:hover { background-color: var(--bg-surface-hover); }
+.glass-card:hover { background: rgba(22, 22, 26, 0.85); box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5); }
 
 /* ── Location Selector Card ──────────────────────────────── */
 .location-selector {
@@ -573,7 +573,7 @@ main {
 }
 
 /* ── Route Path & Pins ───────────────────────────────────── */
-.route-path {
+.active-route {
   fill: none;
   stroke: var(--accent-green);
   stroke-width: 3.5;
@@ -581,6 +581,7 @@ main {
   stroke-linejoin: round;
   stroke-dasharray: 8 4;
   animation: routeDash 1s linear infinite;
+  pointer-events: none;
 }
 
 @keyframes routeDash {
@@ -592,6 +593,7 @@ main {
   stroke: white;
   stroke-width: 1.5;
   animation: pinPulse 2s ease-in-out infinite;
+  pointer-events: none;
 }
 
 .end-pin {
@@ -599,6 +601,7 @@ main {
   stroke: white;
   stroke-width: 1.5;
   animation: pinPulse 2s ease-in-out infinite;
+  pointer-events: none;
 }
 
 @keyframes pinPulse {
