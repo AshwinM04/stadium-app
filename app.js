@@ -1740,9 +1740,9 @@ function buildSystemPrompt() {
   const uiLang       = getEffectiveUILang();
   const langName     = OFFLINE_DICTIONARY[uiLang]?.langName || 'English';
   const startLoc     = getStartLocation();
-  const startDisplay = STADIUM_DATA.gates[startLoc.section]
-    ? startLoc.section
-    : `Section ${startLoc.section} (Level ${startLoc.level})`;
+  const startDisplay = startLoc && startLoc.section
+    ? (STADIUM_DATA.gates[startLoc.section] ? startLoc.section : `Section ${startLoc.section} (Level ${startLoc.level})`)
+    : 'Unknown location';
 
   // Build a concise vendor/facility catalogue for the prompt
   const facilityLines = cfg.facilities.map(f => {
