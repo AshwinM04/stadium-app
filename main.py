@@ -146,12 +146,13 @@ def chat():
 
     data = request.get_json() or {}
     system_instruction = data.get("system_instruction", "")
+    system_instruction += " Provide brief, 1-2 sentence answers."
     query = data.get("query", "")
 
     if not query:
         return jsonify({"error": "Query parameter is required"}), 400
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key={GEMINI_API_KEY}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
     
     payload = {
         "system_instruction": {
@@ -164,8 +165,8 @@ def chat():
             }
         ],
         "generationConfig": {
-            "temperature": 0.7,
-            "maxOutputTokens": 2048,
+            "temperature": 0.4,
+            "maxOutputTokens": 150,
             "topP": 0.95
         }
     }
