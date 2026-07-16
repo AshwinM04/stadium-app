@@ -146,7 +146,7 @@ def chat():
 
     data = request.get_json() or {}
     system_instruction = data.get("system_instruction", "")
-    system_instruction += " Provide brief, 1-2 sentence answers."
+    system_instruction += " You are a stadium assistant. You MUST limit your responses to a maximum of 2 short sentences. Never ramble or provide long lists."
     query = data.get("query", "")
 
     if not query:
@@ -166,7 +166,7 @@ def chat():
         ],
         "generationConfig": {
             "temperature": 0.4,
-            "maxOutputTokens": 150,
+            "maxOutputTokens": 400,
             "topP": 0.95
         }
     }
