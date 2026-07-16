@@ -55,6 +55,13 @@ body {
   line-height: 1.6;
 }
 
+@media (max-width: 480px) {
+  #control-panels {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+}
+
 .app-container {
   width: 100%;
   max-width: 480px;
@@ -251,7 +258,7 @@ main {
 }
 
 /* Stadium dropdown */
-.stadium-select-wrapper { position: relative; }
+.stadium-select-wrapper { position: relative; width: 100%; box-sizing: border-box; }
 
 .stadium-select {
   width: 100%;
@@ -292,7 +299,7 @@ main {
 }
 
 /* Searchable datalist inputs — styled to match the dark theme */
-.searchable-select-wrapper { position: relative; }
+.searchable-select-wrapper { position: relative; width: 100%; box-sizing: border-box; }
 
 #start-level-input,
 #start-section-input {
@@ -330,6 +337,8 @@ main {
   position: relative;
   display: flex;
   align-items: center;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .search-input {
@@ -1476,3 +1485,46 @@ footer a:hover { text-decoration: underline; }
   border-color: rgba(124, 77, 255, 0.5);
 }
 
+@media (max-width: 480px) {
+  #control-panels {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+}
+
+/* ── UI Additions (Toggles & Toasts) ────────────────────── */
+.active-toggle {
+  background: rgba(30, 144, 255, 0.2);
+  border: 1px solid rgba(30, 144, 255, 0.5);
+}
+
+.toast-notification {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--accent-green);
+  color: #080710;
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  z-index: 2000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.toast-notification.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.ph-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin { 
+  100% { transform: rotate(360deg); } 
+}

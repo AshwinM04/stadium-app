@@ -159,7 +159,7 @@ let selectedLangOverride   = 'auto';
 // Snapshot of last offline render — used to re-render on lang change
 let lastRenderState = null;
 let customStartCoords = null;
-
+let mapClickMode = 'dest'; // 'start' or 'dest'
 // ── DOM References ─────────────────────────────────────────
 const stadiumSelect     = document.getElementById('stadium-select');
 const langSelect        = document.getElementById('lang-select');
@@ -806,9 +806,8 @@ function drawStadiumSVG() {
         exactDest = { x: svgP.x, y: svgP.y };
       }
 
-      const startLoc   = getStartLocation();
-      if (!startLoc) {
-        // Set start location on first tap
+      if (mapClickMode === 'start' || !startLoc) {
+        // Set start location on first tap or when toggle is 'start'
         customStartCoords = exactDest;
         let nearestDist = Infinity;
         let nearestSec = 101;
@@ -1127,17 +1126,22 @@ function drawActiveRoute(startSec, startLvl, endSec, endLvl, exactDestCoords = n
 
   let pathStr = '';
 
+  if (customStartCoords) {
+    const c1 = getStadiumCoords(startSec, startLvl);
+    pathStr = `M ${customStartCoords.x} ${customStartCoords.y} L ${c1.x} ${c1.y} `;
+  }
+
   if (startLvl === endLvl) {
-    pathStr = buildArcPath(startSec, endSec, startLvl);
+    pathStr += buildArcPath(startSec, endSec, startLvl, !!customStartCoords);
   } else {
     const escGate  = findNearestGate(startSec);
     const gateData = STADIUM_DATA.gates[escGate];
     const gateEndC = getStadiumCoords(gateData.section, endLvl);
 
-    const p1 = buildArcPath(startSec, gateData.section, startLvl);
+    const p1 = buildArcPath(startSec, gateData.section, startLvl, !!customStartCoords);
     const p2 = `L ${gateEndC.x} ${gateEndC.y}`;
     const p3 = buildArcPath(gateData.section, endSec, endLvl, true);
-    pathStr  = `${p1} ${p2} ${p3}`;
+    pathStr  += `${p1} ${p2} ${p3}`;
   }
 
   if (exactDestCoords) {
@@ -1860,6 +1864,11 @@ async function askGenAI(userQuery) {
   if (aiSendBtn)  aiSendBtn.disabled  = true;
   if (aiInput)    aiInput.disabled    = true;
 
+  const fabBtn = document.getElementById('ai-fab');
+  if (fabBtn) {
+    fabBtn.innerHTML = '<i class="ph ph-spinner ph-spin"></i> Thinking...';
+  }
+
   // 3. Build context-rich prompt
   const systemPrompt = buildSystemPrompt();
 
@@ -1898,6 +1907,11 @@ async function askGenAI(userQuery) {
     removeTypingIndicator();
     renderAIMessage('bot', mdToHtml(rawText));
     setAIStatus('idle');
+
+    if (fabBtn) {
+      fabBtn.innerHTML = '<i class="ph-fill ph-chat-circle-text"></i> Ask AI <span class="badge" style="background:#ff3366;color:#fff;border-radius:50%;padding:2px 6px;margin-left:5px;font-size:10px;">1</span>';
+    }
+    showToast('AI Response Ready');
 
   } catch (err) {
     removeTypingIndicator();
@@ -1940,6 +1954,7 @@ function initAIChat() {
     fabBtn.addEventListener('click', () => {
       chatCard.classList.add('open');
       fabBtn.classList.add('hidden');
+      fabBtn.innerHTML = '<i class="ph-fill ph-chat-circle-text"></i> Ask AI';
       if (aiInput) aiInput.focus();
     });
   }
@@ -1972,3 +1987,34 @@ function initAIChat() {
     askGenAI(q);
   }
 }
+
+function showToast(msg) {
+  let t = document.getElementById('ai-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'ai-toast';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.className = 'toast-notification show';
+  setTimeout(() => { t.classList.remove('show'); }, 3000);
+}
+
+// ── Map Toggles Init ──────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  const toggleStart = document.getElementById('toggle-start');
+  const toggleDest = document.getElementById('toggle-dest');
+  
+  if (toggleStart && toggleDest) {
+    toggleStart.addEventListener('click', () => {
+      mapClickMode = 'start';
+      toggleStart.classList.add('active-toggle');
+      toggleDest.classList.remove('active-toggle');
+    });
+    toggleDest.addEventListener('click', () => {
+      mapClickMode = 'dest';
+      toggleDest.classList.add('active-toggle');
+      toggleStart.classList.remove('active-toggle');
+    });
+  }
+});
