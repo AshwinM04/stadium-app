@@ -817,37 +817,36 @@ function drawStadiumSVG() {
           if (d < nearestDist) { nearestDist = d; nearestSec = 100 + s; }
         }
         updateUIStartLocation(nearestSec, 100);
-        return;
-      }
-      
-      let nearestDist = Infinity;
-      let nearestQuery = '';
+      } else if (mapClickMode === 'dest') {
+        let nearestDist = Infinity;
+        let nearestQuery = '';
+        const baseLevel = startLoc ? startLoc.level : 100;
 
-      const baseLevel = startLoc ? startLoc.level : 100;
+        // Check all facilities on current level
+        STADIUM_DATA.facilities.filter(f => f.level === baseLevel).forEach(f => {
+          const fc = getStadiumCoords(f.section, f.level);
+          const d = Math.sqrt((fc.x - exactDest.x) ** 2 + (fc.y - exactDest.y) ** 2);
+          if (d < nearestDist) {
+            nearestDist = d;
+            nearestQuery = `${getCategoryLabel(f.category)}: ${f.shortName}`;
+          }
+        });
 
-      // Check all facilities on current level
-      STADIUM_DATA.facilities.filter(f => f.level === baseLevel).forEach(f => {
-        const fc = getStadiumCoords(f.section, f.level);
-        const d = Math.sqrt((fc.x - exactDest.x) ** 2 + (fc.y - exactDest.y) ** 2);
-        if (d < nearestDist) {
-          nearestDist = d;
-          nearestQuery = `${getCategoryLabel(f.category)}: ${f.shortName}`;
+        // Check all sections on current level
+        for (let s = 1; s <= 48; s++) {
+          const secId = baseLevel + s;
+          const sc = getStadiumCoords(secId, baseLevel);
+          const d = Math.sqrt((sc.x - exactDest.x) ** 2 + (sc.y - exactDest.y) ** 2);
+          if (d < nearestDist) {
+            nearestDist = d;
+            nearestQuery = `Go to Section ${secId}`;
+          }
         }
-      });
-
-      // Check all sections on current level
-      for (let s = 1; s <= 48; s++) {
-        const secId = baseLevel + s;
-        const sc = getStadiumCoords(secId, baseLevel);
-        const d = Math.sqrt((sc.x - exactDest.x) ** 2 + (sc.y - exactDest.y) ** 2);
-        if (d < nearestDist) {
-          nearestDist = d;
-          nearestQuery = `Go to Section ${secId}`;
-        }
+        
+        queryInput.value = nearestQuery;
+        // Trigger routing function to draw path
+        runOfflineEngine(queryInput.value, startLoc ? startLoc.section : "101", baseLevel, exactDest);
       }
-      
-      queryInput.value = nearestQuery;
-      runOfflineEngine(queryInput.value, startLoc ? startLoc.section : "101", baseLevel, exactDest);
     });
     layoutGroup.appendChild(path);
 
@@ -1881,11 +1880,17 @@ async function askGenAI(userQuery) {
   };
 
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
+
     const response = await fetch(BACKEND_CHAT_URL, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify(requestBody)
+      body:    JSON.stringify(requestBody),
+      signal:  controller.signal
     });
+    
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       const errJson = await response.json().catch(() => ({}));
@@ -1918,13 +1923,26 @@ async function askGenAI(userQuery) {
 
   } catch (err) {
     removeTypingIndicator();
-    renderAIMessage(
-      'bot',
-      mdToHtml(`⚠️ Network error communicating with the AI. Please check your connection.`),
-      true
-    );
-    setAIStatus('error');
     isAIFetching = false;
+    
+    if (fabBtn) {
+      fabBtn.innerHTML = '<i class="ph-fill ph-chat-circle-text"></i> Ask AI';
+    }
+
+    if (err.name === 'AbortError') {
+      renderAIMessage(
+        'bot',
+        mdToHtml(`⚠️ Connection timed out. Please try again.`),
+        true
+      );
+    } else {
+      renderAIMessage(
+        'bot',
+        mdToHtml(`⚠️ Network error communicating with the AI. Please check your connection.`),
+        true
+      );
+    }
+    setAIStatus('error');
   } finally {
     // 6. Re-enable UI
     if (aiSendBtn)  aiSendBtn.disabled  = false;
