@@ -900,7 +900,8 @@ function drawStadiumSVG() {
   });
 
   // ── Facility icon nodes ──
-  const currentLvl = getStartLocation().level;
+  const loc = getStartLocation();
+  const currentLvl = loc ? loc.level : 100;
   const currentLevelFacilities = STADIUM_DATA.facilities.filter(f => f.level === currentLvl);
 
   currentLevelFacilities.forEach(fac => {
@@ -1603,6 +1604,14 @@ function updateGoogleMapsLink() {
 function switchStadium(id) {
   currentStadiumId = id;
   STADIUM_DATA     = STADIUM_CONFIGS[id];
+
+  // Fallback to MetLife coordinates if missing
+  if (!STADIUM_DATA.facilities || STADIUM_DATA.facilities.length === 0) {
+    STADIUM_DATA.facilities = STADIUM_CONFIGS['metlife'].facilities;
+  }
+  if (!STADIUM_DATA.gates || Object.keys(STADIUM_DATA.gates).length === 0) {
+    STADIUM_DATA.gates = STADIUM_CONFIGS['metlife'].gates;
+  }
 
   resultsCard.style.display = 'none';
   loadingCard.style.display = 'none';
