@@ -806,6 +806,8 @@ function drawStadiumSVG() {
         exactDest = { x: svgP.x, y: svgP.y };
       }
 
+      const startLoc = getStartLocation();
+
       if (mapClickMode === 'start') {
         // Set start location on first tap or when toggle is 'start'
         customStartCoords = exactDest;
@@ -844,8 +846,18 @@ function drawStadiumSVG() {
         }
         
         queryInput.value = nearestQuery;
-        // Trigger routing function to draw path
-        runOfflineEngine(queryInput.value, startLoc ? startLoc.section : "101", baseLevel, exactDest);
+        
+        if (!startLoc) {
+          // If startLoc is null, ONLY drop the visual destination pin
+          const endPin = document.getElementById('end-pin');
+          if (endPin) {
+            endPin.setAttribute('cx', exactDest.x);
+            endPin.setAttribute('cy', exactDest.y);
+          }
+        } else {
+          // Trigger routing safely
+          runOfflineEngine(queryInput.value, startLoc.section, baseLevel, exactDest);
+        }
       }
     });
     layoutGroup.appendChild(path);
