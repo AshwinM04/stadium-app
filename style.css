@@ -458,7 +458,7 @@ main {
   gap: 10px;
 }
 
-.legend-item { display: flex; align-items: center; gap: 4px; }
+.legend-item { display: flex; align-items: center; gap: 4px; color: #ffffff !important; font-weight: 600; }
 
 .legend-color {
   width: 8px;

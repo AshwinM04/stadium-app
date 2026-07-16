@@ -156,10 +156,10 @@ let activeSpeakerUtterance = null;
 let currentDirections      = [];
 let currentLangCode        = 'en-US';
 let selectedLangOverride   = 'auto';
-// Snapshot of last offline render — used to re-render on lang change
 let lastRenderState = null;
 let customStartCoords = null;
 let mapClickMode = 'dest'; // 'start' or 'dest'
+let isAIFetching = false;
 // ── DOM References ─────────────────────────────────────────
 const stadiumSelect     = document.getElementById('stadium-select');
 const langSelect        = document.getElementById('lang-select');
@@ -806,7 +806,7 @@ function drawStadiumSVG() {
         exactDest = { x: svgP.x, y: svgP.y };
       }
 
-      if (mapClickMode === 'start' || !startLoc) {
+      if (mapClickMode === 'start') {
         // Set start location on first tap or when toggle is 'start'
         customStartCoords = exactDest;
         let nearestDist = Infinity;
@@ -823,8 +823,10 @@ function drawStadiumSVG() {
       let nearestDist = Infinity;
       let nearestQuery = '';
 
+      const baseLevel = startLoc ? startLoc.level : 100;
+
       // Check all facilities on current level
-      STADIUM_DATA.facilities.filter(f => f.level === startLoc.level).forEach(f => {
+      STADIUM_DATA.facilities.filter(f => f.level === baseLevel).forEach(f => {
         const fc = getStadiumCoords(f.section, f.level);
         const d = Math.sqrt((fc.x - exactDest.x) ** 2 + (fc.y - exactDest.y) ** 2);
         if (d < nearestDist) {
@@ -834,7 +836,6 @@ function drawStadiumSVG() {
       });
 
       // Check all sections on current level
-      const baseLevel = startLoc.level;
       for (let s = 1; s <= 48; s++) {
         const secId = baseLevel + s;
         const sc = getStadiumCoords(secId, baseLevel);
@@ -846,7 +847,7 @@ function drawStadiumSVG() {
       }
       
       queryInput.value = nearestQuery;
-      runOfflineEngine(queryInput.value, startLoc.section, startLoc.level, exactDest);
+      runOfflineEngine(queryInput.value, startLoc ? startLoc.section : "101", baseLevel, exactDest);
     });
     layoutGroup.appendChild(path);
 
@@ -1861,6 +1862,7 @@ async function askGenAI(userQuery) {
   // 2. Show typing indicator & lock UI
   const typingEl = showTypingIndicator();
   setAIStatus('thinking');
+  isAIFetching = true;
   if (aiSendBtn)  aiSendBtn.disabled  = true;
   if (aiInput)    aiInput.disabled    = true;
 
@@ -1907,6 +1909,7 @@ async function askGenAI(userQuery) {
     removeTypingIndicator();
     renderAIMessage('bot', mdToHtml(rawText));
     setAIStatus('idle');
+    isAIFetching = false;
 
     if (fabBtn) {
       fabBtn.innerHTML = '<i class="ph-fill ph-chat-circle-text"></i> Ask AI <span class="badge" style="background:#ff3366;color:#fff;border-radius:50%;padding:2px 6px;margin-left:5px;font-size:10px;">1</span>';
@@ -1917,10 +1920,11 @@ async function askGenAI(userQuery) {
     removeTypingIndicator();
     renderAIMessage(
       'bot',
-      mdToHtml(`**Something went wrong.**\n\n${err.message}\n\nPlease check your API key and network connection, then try again.`),
+      mdToHtml(`⚠️ Network error communicating with the AI. Please check your connection.`),
       true
     );
     setAIStatus('error');
+    isAIFetching = false;
   } finally {
     // 6. Re-enable UI
     if (aiSendBtn)  aiSendBtn.disabled  = false;
@@ -1954,7 +1958,9 @@ function initAIChat() {
     fabBtn.addEventListener('click', () => {
       chatCard.classList.add('open');
       fabBtn.classList.add('hidden');
-      fabBtn.innerHTML = '<i class="ph-fill ph-chat-circle-text"></i> Ask AI';
+      if (!isAIFetching) {
+        fabBtn.innerHTML = '<i class="ph-fill ph-chat-circle-text"></i> Ask AI';
+      }
       if (aiInput) aiInput.focus();
     });
   }
