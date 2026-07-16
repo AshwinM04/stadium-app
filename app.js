@@ -155,6 +155,7 @@ let isOfflineForced        = false;
 let activeSpeakerUtterance = null;
 let currentDirections      = [];
 let currentLangCode        = 'en-US';
+let selectedLangOverride   = 'en';
 let lastRenderState = null;
 let customStartCoords = null;
 let customDestCoords = null;

@@ -390,7 +390,8 @@ main {
   -webkit-overflow-scrolling: touch;
   display: flex;
   gap: 8px;
-  padding: 2px 0 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
   scrollbar-width: thin;
   scrollbar-color: rgba(255,255,255,0.1) transparent;
 }
