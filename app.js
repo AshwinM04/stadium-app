@@ -821,29 +821,38 @@ function drawStadiumSVG() {
         }
         updateUIStartLocation(nearestSec, 100);
       } else if (mapClickMode === 'dest') {
-        customDestCoords = exactDest;
         let nearestDist = Infinity;
         let nearestQuery = '';
+        let snappedToAmenity = false;
         const baseLevel = startLoc ? startLoc.level : 100;
 
-        // Check all facilities on current level
+        // Check amenities within 30px magnetic snap radius
         STADIUM_DATA.facilities.filter(f => f.level === baseLevel).forEach(f => {
           const fc = getStadiumCoords(f.section, f.level);
+          // Calculate distance from click (exactDest) to amenity (fc)
           const d = Math.sqrt((fc.x - exactDest.x) ** 2 + (fc.y - exactDest.y) ** 2);
-          if (d < nearestDist) {
+          if (d <= 30 && d < nearestDist) {
             nearestDist = d;
             nearestQuery = `${getCategoryLabel(f.category)}: ${f.shortName}`;
+            // Snap the visual destination exactly to the amenity's coordinates
+            customDestCoords = { x: fc.x, y: fc.y };
+            snappedToAmenity = true;
           }
         });
 
-        // Check all sections on current level
-        for (let s = 1; s <= 48; s++) {
-          const secId = baseLevel + s;
-          const sc = getStadiumCoords(secId, baseLevel);
-          const d = Math.sqrt((sc.x - exactDest.x) ** 2 + (sc.y - exactDest.y) ** 2);
-          if (d < nearestDist) {
-            nearestDist = d;
-            nearestQuery = `Go to Section ${secId}`;
+        // Only fall back to generic sections if no amenity was within 30px
+        if (!snappedToAmenity) {
+          nearestDist = Infinity;
+          for (let s = 1; s <= 48; s++) {
+            const secId = baseLevel + s;
+            const sc = getStadiumCoords(secId, baseLevel);
+            const d = Math.sqrt((sc.x - exactDest.x) ** 2 + (sc.y - exactDest.y) ** 2);
+            if (d < nearestDist) {
+              nearestDist = d;
+              nearestQuery = `Go to Section ${secId}`;
+              // For sections, we keep the user's exact tap location
+              customDestCoords = exactDest;
+            }
           }
         }
         
