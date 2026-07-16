@@ -94,22 +94,22 @@ const STADIUM_CONFIGS = {
       'Gate 4 (West)':  { id: 'gate_4', name: 'Gate 4 – West',  section: 137, level: 100, x: 15,  y: 100 }
     },
     facilities: [
-      { id: 'restroom_112', category: 'bathroom', section: 112, level: 100,
+      { id: 'restroom_112', category: 'bathroom', section: 112, level: 100, x: 40, y: 150,
         shortName: 'Restroom Alpha',
         name: { en: 'Restroom Alpha', es: 'Baño Alfa', fr: 'Toilettes Alpha', de: 'Toilette Alpha', pt: 'Banheiro Alpha', ja: 'トイレ Alpha' } },
-      { id: 'restroom_238', category: 'bathroom', section: 238, level: 200,
+      { id: 'restroom_238', category: 'bathroom', section: 238, level: 200, x: 80, y: 30,
         shortName: 'Club Level Restroom',
         name: { en: 'Club Level Restroom', es: 'Baño de Club', fr: 'Toilettes Club', de: 'Club-Toilette', pt: 'Banheiro Club', ja: 'クラブ トイレ' } },
-      { id: 'taco_110', category: 'food', section: 110, level: 100,
+      { id: 'taco_110', category: 'food', section: 110, level: 100, x: 160, y: 40,
         shortName: 'SoFi Street Tacos',
         name: { en: 'SoFi Street Tacos', es: 'Tacos Callejeros SoFi', fr: 'SoFi Tacos de Rue', de: 'SoFi Street Tacos', pt: 'Tacos de Rua SoFi', ja: 'SoFi ストリートタコス' } },
-      { id: 'burger_125', category: 'food', section: 125, level: 100,
+      { id: 'burger_125', category: 'food', section: 125, level: 100, x: 140, y: 160,
         shortName: 'LA Smash Burgers',
         name: { en: 'LA Smash Burgers', es: 'LA Smash Burgers', fr: 'LA Smash Burgers', de: 'LA Smash Burgers', pt: 'LA Smash Burgers', ja: 'LA スマッシュバーガー' } },
-      { id: 'firstaid_119', category: 'firstaid', section: 119, level: 100,
+      { id: 'firstaid_119', category: 'firstaid', section: 119, level: 100, x: 50, y: 60,
         shortName: 'First Aid Station',
         name: { en: 'First Aid Station', es: 'Primeros Auxilios', fr: 'Poste de Secours', de: 'Erste-Hilfe-Station', pt: 'Posto de Socorros', ja: '救急ステーション' } },
-      { id: 'merch_101', category: 'merch', section: 101, level: 100,
+      { id: 'merch_101', category: 'merch', section: 101, level: 100, x: 100, y: 30,
         shortName: 'FIFA Official Store SoFi',
         name: { en: 'FIFA Official Store SoFi', es: 'Tienda Oficial FIFA SoFi', fr: 'Boutique Officielle FIFA SoFi', de: 'FIFA Offizieller Shop SoFi', pt: 'Loja Oficial FIFA SoFi', ja: 'FIFA 公式ストア SoFi' } }
     ]
@@ -129,16 +129,16 @@ const STADIUM_CONFIGS = {
       'Acceso D (Oeste)': { id: 'gate_d', name: 'Acceso D – Oeste', section: 137, level: 100, x: 15,  y: 100 }
     },
     facilities: [
-      { id: 'restroom_112', category: 'bathroom', section: 112, level: 100,
+      { id: 'restroom_112', category: 'bathroom', section: 112, level: 100, x: 170, y: 130,
         shortName: 'Sanitarios Azteca',
         name: { en: 'Azteca Restrooms', es: 'Sanitarios Azteca', fr: 'Toilettes Aztèque', de: 'Azteken-Toilette', pt: 'Banheiros Azteca', ja: 'アステカ トイレ' } },
-      { id: 'taco_110', category: 'food', section: 110, level: 100,
+      { id: 'taco_110', category: 'food', section: 110, level: 100, x: 140, y: 60,
         shortName: 'Tacos Azteca',
         name: { en: 'Tacos Azteca', es: 'Tacos Azteca', fr: 'Tacos Aztèque', de: 'Tacos Azteka', pt: 'Tacos Azteca', ja: 'タコス アステカ' } },
-      { id: 'firstaid_119', category: 'firstaid', section: 119, level: 100,
+      { id: 'firstaid_119', category: 'firstaid', section: 119, level: 100, x: 40, y: 110,
         shortName: 'Puesto de Primeros Auxilios',
         name: { en: 'First Aid Post', es: 'Puesto de Primeros Auxilios', fr: 'Poste de Premiers Secours', de: 'Erste-Hilfe-Posten', pt: 'Posto de Primeiros Auxilios', ja: '救急ポスト' } },
-      { id: 'merch_101', category: 'merch', section: 101, level: 100,
+      { id: 'merch_101', category: 'merch', section: 101, level: 100, x: 90, y: 170,
         shortName: 'FIFA Tienda Oficial',
         name: { en: 'FIFA Official Store Azteca', es: 'FIFA Tienda Oficial Azteca', fr: 'Boutique Officielle FIFA Aztèque', de: 'FIFA Offizieller Shop Azteka', pt: 'Loja Oficial FIFA Azteca', ja: 'FIFA 公式ストア アステカ' } }
     ]
@@ -158,6 +158,7 @@ let currentLangCode        = 'en-US';
 let selectedLangOverride   = 'auto';
 // Snapshot of last offline render — used to re-render on lang change
 let lastRenderState = null;
+let customStartCoords = null;
 
 // ── DOM References ─────────────────────────────────────────
 const stadiumSelect     = document.getElementById('stadium-select');
@@ -808,6 +809,7 @@ function drawStadiumSVG() {
       const startLoc   = getStartLocation();
       if (!startLoc) {
         // Set start location on first tap
+        customStartCoords = exactDest;
         let nearestDist = Infinity;
         let nearestSec = 101;
         for (let s = 1; s <= 48; s++) {
@@ -905,7 +907,9 @@ function drawStadiumSVG() {
   const currentLevelFacilities = STADIUM_DATA.facilities.filter(f => f.level === currentLvl);
 
   currentLevelFacilities.forEach(fac => {
-    const coords = getStadiumCoords(fac.section, fac.level);
+    const coords = (fac.x !== undefined && fac.y !== undefined)
+      ? { x: fac.x, y: fac.y }
+      : getStadiumCoords(fac.section, fac.level);
     const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     g.setAttribute('class', 'facility-node');
     g.setAttribute('id', `node_${fac.id}`);
@@ -1084,7 +1088,7 @@ function triggerMapUpdate() {
   const loc = getStartLocation();
   const startPin = document.getElementById('start-pin');
   if (loc) {
-    const c = getStadiumCoords(loc.section, loc.level);
+    const c = customStartCoords || getStadiumCoords(loc.section, loc.level);
     startPin.setAttribute('cx', c.x);
     startPin.setAttribute('cy', c.y);
   } else {
@@ -1096,11 +1100,13 @@ function triggerMapUpdate() {
 
 // ── Input event listeners ──────────────────────────────────
 startLevelInput.addEventListener('input', () => {
+  customStartCoords = null;
   populateSectionDatalist();
   triggerMapUpdate();
 });
 
 startSectionInput.addEventListener('input', () => {
+  customStartCoords = null;
   const secVal = startSectionInput.value;
   const m = secVal.match(/(?:section\s*)?([123])\d{2}/i);
   if (m) {
@@ -1605,17 +1611,10 @@ function switchStadium(id) {
   currentStadiumId = id;
   STADIUM_DATA     = STADIUM_CONFIGS[id];
 
-  // Fallback to MetLife coordinates if missing
-  if (!STADIUM_DATA.facilities || STADIUM_DATA.facilities.length === 0) {
-    STADIUM_DATA.facilities = STADIUM_CONFIGS['metlife'].facilities;
-  }
-  if (!STADIUM_DATA.gates || Object.keys(STADIUM_DATA.gates).length === 0) {
-    STADIUM_DATA.gates = STADIUM_CONFIGS['metlife'].gates;
-  }
-
   resultsCard.style.display = 'none';
   loadingCard.style.display = 'none';
   lastRenderState           = null;
+  customStartCoords         = null;
   stopSpeaking();
 
   const routePath = document.getElementById('active-route');
