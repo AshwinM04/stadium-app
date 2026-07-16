@@ -152,8 +152,7 @@ def chat():
     if not query:
         return jsonify({"error": "Query parameter is required"}), 400
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key={GEMINI_API_KEY}"
-    fallback_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={GEMINI_API_KEY}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}"
     
     payload = {
         "system_instruction": {
@@ -174,7 +173,6 @@ def chat():
     
     import json
     import urllib.request
-    import urllib.error
     
     try:
         req = urllib.request.Request(url, data=json.dumps(payload).encode('utf-8'), headers={'Content-Type': 'application/json'})
@@ -182,25 +180,10 @@ def chat():
             result = json.loads(response.read().decode('utf-8'))
             text = result.get('candidates', [{}])[0].get('content', {}).get('parts', [{}])[0].get('text', '')
             return jsonify({"text": text}), 200
-    except urllib.error.HTTPError as e:
-        if e.code == 404:
-            logging.warning("gemini-1.5-flash-latest returned 404. Falling back to gemini-pro.")
-            try:
-                req_fallback = urllib.request.Request(fallback_url, data=json.dumps(payload).encode('utf-8'), headers={'Content-Type': 'application/json'})
-                with urllib.request.urlopen(req_fallback) as response:
-                    result = json.loads(response.read().decode('utf-8'))
-                    text = result.get('candidates', [{}])[0].get('content', {}).get('parts', [{}])[0].get('text', '')
-                    return jsonify({"text": text}), 200
-            except Exception as fallback_e:
-                logging.error(f"Fallback API Error: {str(fallback_e)}", exc_info=True)
-                return jsonify({"error": "The AI is currently busy. Please wait a moment or use the interactive map."}), 200
-        
+    except Exception as e:
         logging.error(f"API Error (Gemini API): {str(e)}", exc_info=True)
         if hasattr(e, 'read'):
             logging.error(f"Response body: {e.read().decode('utf-8')}")
-        return jsonify({"error": "The AI is currently busy. Please wait a moment or use the interactive map."}), 200
-    except Exception as e:
-        logging.error(f"API Error (Gemini API): {str(e)}", exc_info=True)
         return jsonify({"error": "The AI is currently busy. Please wait a moment or use the interactive map."}), 200
 
 if __name__ == '__main__':
