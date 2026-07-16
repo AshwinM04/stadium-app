@@ -155,9 +155,9 @@ let isOfflineForced        = false;
 let activeSpeakerUtterance = null;
 let currentDirections      = [];
 let currentLangCode        = 'en-US';
-let selectedLangOverride   = 'auto';
 let lastRenderState = null;
 let customStartCoords = null;
+let customDestCoords = null;
 let mapClickMode = 'dest'; // 'start' or 'dest'
 let isAIFetching = false;
 // ── DOM References ─────────────────────────────────────────
@@ -820,6 +820,7 @@ function drawStadiumSVG() {
         }
         updateUIStartLocation(nearestSec, 100);
       } else if (mapClickMode === 'dest') {
+        customDestCoords = exactDest;
         let nearestDist = Infinity;
         let nearestQuery = '';
         const baseLevel = startLoc ? startLoc.level : 100;
@@ -847,17 +848,24 @@ function drawStadiumSVG() {
         
         queryInput.value = nearestQuery;
         
-        if (!startLoc) {
-          // If startLoc is null, ONLY drop the visual destination pin
-          const endPin = document.getElementById('end-pin');
-          if (endPin) {
-            endPin.setAttribute('cx', exactDest.x);
-            endPin.setAttribute('cy', exactDest.y);
-          }
-        } else {
-          // Trigger routing safely
-          runOfflineEngine(queryInput.value, startLoc.section, baseLevel, exactDest);
+        // ONLY drop the visual destination pin
+        const endPin = document.getElementById('end-pin');
+        if (endPin) {
+          endPin.setAttribute('cx', exactDest.x);
+          endPin.setAttribute('cy', exactDest.y);
         }
+      }
+
+      // Check State After Every Click
+      const updatedStartLoc = getStartLocation();
+      if (updatedStartLoc && customDestCoords && queryInput.value) {
+        // Explicitly clear existing SVG route paths
+        const activeRoute = document.getElementById('active-route');
+        if (activeRoute) {
+          activeRoute.setAttribute('d', '');
+        }
+        // Immediately trigger routing safely
+        runOfflineEngine(queryInput.value, updatedStartLoc.section, updatedStartLoc.level, customDestCoords);
       }
     });
     layoutGroup.appendChild(path);
