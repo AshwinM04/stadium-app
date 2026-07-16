@@ -743,8 +743,31 @@ const OFFLINE_DICTIONARY = {
 };
 
 // ============================================================
-//  COORDINATE MATH
+//  COORDINATE MATH & HELPERS
 // ============================================================
+
+function findNearestMagneticAmenity(level, clickCoords) {
+  let nearestDist = Infinity;
+  let nearestQuery = '';
+  let amenityCoords = null;
+  let amenitySection = '101';
+
+  STADIUM_DATA.facilities.filter(f => f.level === level).forEach(f => {
+    const fc = getStadiumCoords(f.section, f.level);
+    const d = Math.sqrt((fc.x - clickCoords.x) ** 2 + (fc.y - clickCoords.y) ** 2);
+    if (d <= 30 && d < nearestDist) {
+      nearestDist = d;
+      nearestQuery = `${getCategoryLabel(f.category)}: ${f.shortName}`;
+      amenityCoords = { x: fc.x, y: fc.y };
+      amenitySection = f.section;
+    }
+  });
+
+  if (amenityCoords) {
+    return { name: nearestQuery, coords: amenityCoords, section: amenitySection, dist: nearestDist };
+  }
+  return null;
+}
 function sectionAngle(sectionBase) {
   const b = ((sectionBase - 1) % 48) + 1;
   return ((b - 13) / 48) * 2 * Math.PI;
@@ -810,39 +833,34 @@ function drawStadiumSVG() {
       const startLoc = getStartLocation();
 
       if (mapClickMode === 'start') {
-        // Set start location on first tap or when toggle is 'start'
-        customStartCoords = exactDest;
-        let nearestDist = Infinity;
-        let nearestSec = 101;
-        for (let s = 1; s <= 48; s++) {
-          const sc = getStadiumCoords(100 + s, 100);
-          const d = Math.sqrt((sc.x - exactDest.x) ** 2 + (sc.y - exactDest.y) ** 2);
-          if (d < nearestDist) { nearestDist = d; nearestSec = 100 + s; }
-        }
-        updateUIStartLocation(nearestSec, 100);
-      } else if (mapClickMode === 'dest') {
-        let nearestDist = Infinity;
-        let nearestQuery = '';
-        let snappedToAmenity = false;
-        const baseLevel = startLoc ? startLoc.level : 100;
-
-        // Check amenities within 30px magnetic snap radius
-        STADIUM_DATA.facilities.filter(f => f.level === baseLevel).forEach(f => {
-          const fc = getStadiumCoords(f.section, f.level);
-          // Calculate distance from click (exactDest) to amenity (fc)
-          const d = Math.sqrt((fc.x - exactDest.x) ** 2 + (fc.y - exactDest.y) ** 2);
-          if (d <= 30 && d < nearestDist) {
-            nearestDist = d;
-            nearestQuery = `${getCategoryLabel(f.category)}: ${f.shortName}`;
-            // Snap the visual destination exactly to the amenity's coordinates
-            customDestCoords = { x: fc.x, y: fc.y };
-            snappedToAmenity = true;
+        const baseLevel = 100;
+        const amenityMatch = findNearestMagneticAmenity(baseLevel, exactDest);
+        
+        if (amenityMatch) {
+          customStartCoords = { x: amenityMatch.coords.x, y: amenityMatch.coords.y, name: amenityMatch.name };
+          updateUIStartLocation(amenityMatch.section, baseLevel);
+        } else {
+          customStartCoords = exactDest;
+          let nearestDist = Infinity;
+          let nearestSec = 101;
+          for (let s = 1; s <= 48; s++) {
+            const sc = getStadiumCoords(100 + s, 100);
+            const d = Math.sqrt((sc.x - exactDest.x) ** 2 + (sc.y - exactDest.y) ** 2);
+            if (d < nearestDist) { nearestDist = d; nearestSec = 100 + s; }
           }
-        });
-
-        // Only fall back to generic sections if no amenity was within 30px
-        if (!snappedToAmenity) {
-          nearestDist = Infinity;
+          updateUIStartLocation(nearestSec, 100);
+        }
+      } else if (mapClickMode === 'dest') {
+        const baseLevel = startLoc ? startLoc.level : 100;
+        const amenityMatch = findNearestMagneticAmenity(baseLevel, exactDest);
+        
+        let nearestQuery = '';
+        if (amenityMatch) {
+          customDestCoords = amenityMatch.coords;
+          nearestQuery = amenityMatch.name;
+        } else {
+          customDestCoords = exactDest;
+          let nearestDist = Infinity;
           for (let s = 1; s <= 48; s++) {
             const secId = baseLevel + s;
             const sc = getStadiumCoords(secId, baseLevel);
@@ -850,8 +868,6 @@ function drawStadiumSVG() {
             if (d < nearestDist) {
               nearestDist = d;
               nearestQuery = `Go to Section ${secId}`;
-              // For sections, we keep the user's exact tap location
-              customDestCoords = exactDest;
             }
           }
         }
@@ -861,8 +877,8 @@ function drawStadiumSVG() {
         // ONLY drop the visual destination pin
         const endPin = document.getElementById('end-pin');
         if (endPin) {
-          endPin.setAttribute('cx', exactDest.x);
-          endPin.setAttribute('cy', exactDest.y);
+          endPin.setAttribute('cx', customDestCoords.x);
+          endPin.setAttribute('cy', customDestCoords.y);
         }
       }
 
@@ -1538,7 +1554,9 @@ function resolveAndRender(lang, startSec, startLvl, destSec, destLvl, destName, 
 
   // Step 1: Start
   const startIsGate = !!STADIUM_DATA.gates[startSec];
-  if (startIsGate) {
+  if (customStartCoords && customStartCoords.name) {
+    steps.push(`Start at ${customStartCoords.name} (near Section ${startSec}).`);
+  } else if (startIsGate) {
     steps.push(dict.startGate.replace('{gate}', startSec));
   } else {
     steps.push(dict.start.replace('{start}', startSec).replace('{level}', startLvl));
