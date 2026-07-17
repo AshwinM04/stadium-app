@@ -1929,39 +1929,50 @@ async function askGenAI(userQuery) {
   };
 
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 60000);
-
     const response = await fetch(BACKEND_CHAT_URL, {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify(requestBody),
-      signal:  controller.signal
+      body:    JSON.stringify(requestBody)
     });
     
-    clearTimeout(timeoutId);
-
     if (!response.ok) {
       const errJson = await response.json().catch(() => ({}));
       const errMsg  = errJson?.error?.message || errJson?.message || `HTTP ${response.status}`;
       throw new Error(errMsg);
     }
 
-    const data = await response.json();
-    if (data.error) {
-      removeTypingIndicator();
-      renderAIMessage('bot', mdToHtml(`⚠️ ${data.error}`));
-      setAIStatus('idle');
-      return;
+    removeTypingIndicator();
+    
+    // Initialize streaming bubble
+    renderAIMessage('bot', '');
+    const botBubbles = aiThread.querySelectorAll('.ai-bubble-bot .ai-bubble-text');
+    const currentBubble = botBubbles[botBubbles.length - 1];
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder("utf-8");
+    let accumulatedText = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      const chunk = decoder.decode(value, { stream: true });
+      const lines = chunk.split("\n");
+      for (let line of lines) {
+        if (line.startsWith("data: ")) {
+          const dataStr = line.substring(6);
+          try {
+            const dataObj = JSON.parse(dataStr);
+            if (dataObj.error) {
+              accumulatedText += `⚠️ ${dataObj.error}`;
+            } else if (dataObj.text) {
+              accumulatedText += dataObj.text;
+            }
+          } catch (e) {}
+        }
+      }
+      currentBubble.innerHTML = mdToHtml(accumulatedText);
     }
 
-    // Extract text from backend response
-    const rawText = data.text;
-    if (!rawText) throw new Error('Empty response from backend');
-
-    // 5. Render the bot response
-    removeTypingIndicator();
-    renderAIMessage('bot', mdToHtml(rawText));
     setAIStatus('idle');
     isAIFetching = false;
 

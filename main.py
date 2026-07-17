@@ -152,7 +152,7 @@ def chat():
     if not query:
         return jsonify({"error": "Query parameter is required"}), 400
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={GEMINI_API_KEY}"
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?alt=sse&key={GEMINI_API_KEY}"
     
     payload = {
         "system_instruction": {
@@ -173,18 +173,28 @@ def chat():
     
     import json
     import urllib.request
+    from flask import Response
     
-    try:
-        req = urllib.request.Request(url, data=json.dumps(payload).encode('utf-8'), headers={'Content-Type': 'application/json'})
-        with urllib.request.urlopen(req) as response:
-            result = json.loads(response.read().decode('utf-8'))
-            text = result.get('candidates', [{}])[0].get('content', {}).get('parts', [{}])[0].get('text', '')
-            return jsonify({"text": text}), 200
-    except Exception as e:
-        logging.error(f"API Error (Gemini API): {str(e)}", exc_info=True)
-        if hasattr(e, 'read'):
-            logging.error(f"Response body: {e.read().decode('utf-8')}")
-        return jsonify({"error": "The AI is currently busy. Please wait a moment or use the interactive map."}), 200
+    def stream_generator():
+        try:
+            req = urllib.request.Request(url, data=json.dumps(payload).encode('utf-8'), headers={'Content-Type': 'application/json'})
+            with urllib.request.urlopen(req) as response:
+                for line in response:
+                    line_str = line.decode('utf-8').strip()
+                    if line_str.startswith("data: "):
+                        data_str = line_str[6:]
+                        try:
+                            chunk = json.loads(data_str)
+                            text = chunk.get('candidates', [{}])[0].get('content', {}).get('parts', [{}])[0].get('text', '')
+                            if text:
+                                yield f"data: {json.dumps({'text': text})}\n\n"
+                        except json.JSONDecodeError:
+                            continue
+        except Exception as e:
+            logging.error(f"API Error (Gemini API): {str(e)}", exc_info=True)
+            yield f"data: {json.dumps({'error': 'The AI is currently busy. Please wait a moment or use the interactive map.'})}\n\n"
+
+    return Response(stream_generator(), mimetype='text/event-stream')
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
