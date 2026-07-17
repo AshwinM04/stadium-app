@@ -166,7 +166,7 @@ def chat():
         ],
         "generationConfig": {
             "temperature": 0.4,
-            "maxOutputTokens": 400,
+            "maxOutputTokens": 800,
             "topP": 0.95
         }
     }

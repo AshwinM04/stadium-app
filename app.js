@@ -1930,7 +1930,7 @@ async function askGenAI(userQuery) {
 
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000);
+    const timeoutId = setTimeout(() => controller.abort(), 60000);
 
     const response = await fetch(BACKEND_CHAT_URL, {
       method:  'POST',
@@ -1965,10 +1965,15 @@ async function askGenAI(userQuery) {
     setAIStatus('idle');
     isAIFetching = false;
 
-    if (fabBtn) {
-      fabBtn.innerHTML = '<i class="ph-fill ph-chat-circle-text"></i> Ask AI <span class="badge" style="background:#ff3366;color:#fff;border-radius:50%;padding:2px 6px;margin-left:5px;font-size:10px;">1</span>';
+    const chatCard = document.getElementById('ai-chat-card');
+    const isChatOpen = chatCard && chatCard.classList.contains('open');
+
+    if (!isChatOpen) {
+      if (fabBtn) {
+        fabBtn.innerHTML = '<i class="ph-fill ph-chat-circle-text"></i> Ask AI <span class="badge" style="background:#ff3366;color:#fff;border-radius:50%;padding:2px 6px;margin-left:5px;font-size:10px;">1</span>';
+      }
+      showToast('AI Response Ready');
     }
-    showToast('AI Response Ready');
 
   } catch (err) {
     removeTypingIndicator();
