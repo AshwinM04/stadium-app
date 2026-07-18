@@ -2077,6 +2077,44 @@ function initAIChat() {
     aiInput.value = '';
     askGenAI(q);
   }
+
+  // Phase 2: Voice-to-Text Microphone Integration
+  const aiMicBtn = document.getElementById('ai-mic-btn');
+  if (aiMicBtn) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+
+      aiMicBtn.addEventListener('click', () => {
+        try {
+          aiMicBtn.classList.add('recording');
+          // Optionally set the language to match the current UI lang
+          recognition.lang = selectedLangOverride || 'en';
+          recognition.start();
+        } catch (e) {
+          aiMicBtn.classList.remove('recording');
+        }
+      });
+
+      recognition.addEventListener('result', (event) => {
+        const transcript = event.results[0][0].transcript;
+        aiInput.value = (aiInput.value + ' ' + transcript).trim();
+      });
+
+      recognition.addEventListener('end', () => {
+        aiMicBtn.classList.remove('recording');
+      });
+
+      recognition.addEventListener('error', (event) => {
+        console.error('Speech recognition error', event.error);
+        aiMicBtn.classList.remove('recording');
+      });
+    } else {
+      aiMicBtn.style.display = 'none';
+    }
+  }
 }
 
 function showToast(msg) {
