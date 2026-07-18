@@ -2090,8 +2090,8 @@ function initAIChat() {
       aiMicBtn.addEventListener('click', () => {
         try {
           aiMicBtn.classList.add('recording');
-          // Optionally set the language to match the current UI lang
-          recognition.lang = selectedLangOverride || 'en';
+          // Explicitly set the language to match the current UI lang
+          recognition.lang = selectedLangOverride || 'en-US';
           recognition.start();
         } catch (e) {
           aiMicBtn.classList.remove('recording');
@@ -2109,6 +2109,9 @@ function initAIChat() {
 
       recognition.addEventListener('error', (event) => {
         console.error('Speech recognition error', event.error);
+        if (event.error === 'network' || event.error === 'not-allowed') {
+          alert('Microphone access unavailable or network error. Please type your message.');
+        }
         aiMicBtn.classList.remove('recording');
       });
     } else {
