@@ -1334,6 +1334,11 @@ async function handleConciergeSearch() {
   stopSpeaking();
 
   const loc      = getStartLocation();
+  if (!loc) {
+    loadingCard.style.display = 'none';
+    renderAIMessage('bot', mdToHtml('Map Error: Could not locate those specific coordinates. Please try again.'), true);
+    return;
+  }
   const startSec = loc.section;
   const startLvl = loc.level;
 
@@ -1974,8 +1979,8 @@ async function askGenAI(userQuery) {
       const routeMatch = accumulatedText.match(/\[ROUTE:\s*(.*?),\s*(.*?)\]/);
       
       if (routeMatch) {
-        const startLoc = routeMatch[1];
-        const endLoc = routeMatch[2];
+        let startLoc = routeMatch[1].trim().toUpperCase().replace(/^(NODE|SECTION)\s+/i, '');
+        let endLoc = routeMatch[2].trim().toUpperCase().replace(/^(NODE|SECTION)\s+/i, '');
         displayText = accumulatedText.replace(routeMatch[0], '').trim();
 
         if (!routeTriggeredThisMessage) {
