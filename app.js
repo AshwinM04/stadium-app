@@ -2087,11 +2087,20 @@ function initAIChat() {
       recognition.continuous = false;
       recognition.interimResults = false;
 
+      const localeMap = {
+        'en': 'en-IN',
+        'es': 'es-ES',
+        'fr': 'fr-FR',
+        'de': 'de-DE',
+        'pt': 'pt-BR',
+        'ja': 'ja-JP'
+      };
+
       aiMicBtn.addEventListener('click', () => {
         try {
           aiMicBtn.classList.add('recording');
-          // Explicitly set the language to match the current UI lang
-          recognition.lang = selectedLangOverride || 'en-US';
+          const currentLang = selectedLangOverride || 'en';
+          recognition.lang = localeMap[currentLang] || 'en-IN';
           recognition.start();
         } catch (e) {
           aiMicBtn.classList.remove('recording');
@@ -2099,8 +2108,17 @@ function initAIChat() {
       });
 
       recognition.addEventListener('result', (event) => {
-        const transcript = event.results[0][0].transcript;
-        aiInput.value = (aiInput.value + ' ' + transcript).trim();
+        let transcript = event.results[0][0].transcript.trim();
+        if (transcript) {
+          transcript = transcript.charAt(0).toUpperCase() + transcript.slice(1);
+          const currentLang = selectedLangOverride || 'en';
+          if (currentLang === 'ja') {
+            if (!transcript.endsWith('。')) transcript += '。';
+          } else {
+            if (!/[.!?]$/.test(transcript)) transcript += '.';
+          }
+          aiInput.value = (aiInput.value + ' ' + transcript).trim();
+        }
       });
 
       recognition.addEventListener('end', () => {
