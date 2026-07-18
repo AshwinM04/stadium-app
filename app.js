@@ -2154,14 +2154,25 @@ document.addEventListener('DOMContentLoaded', () => {
   const splash = document.getElementById('welcome-splash');
   if (splash) {
     const greetingEl = document.getElementById('splash-greeting');
-    const greetings = ['Welcome', 'Bienvenido', 'Bienvenue', 'Willkommen', 'Bem-vindo', 'ようこそ'];
+    const subtitleEl = splash.querySelector('.splash-subtitle');
+    const greetings = [
+      { title: 'Welcome', subtitle: 'Select your language to begin' },
+      { title: 'Bienvenido', subtitle: 'Selecciona tu idioma para empezar' },
+      { title: 'Bienvenue', subtitle: 'Sélectionnez votre langue pour commencer' },
+      { title: 'Willkommen', subtitle: 'Wählen Sie Ihre Sprache, um zu beginnen' },
+      { title: 'Bem-vindo', subtitle: 'Selecione seu idioma para começar' },
+      { title: 'ようこそ', subtitle: '言語を選択して開始してください' }
+    ];
     let gIdx = 0;
     const cycleInterval = setInterval(() => {
       gIdx = (gIdx + 1) % greetings.length;
       greetingEl.style.opacity = '0';
+      if (subtitleEl) subtitleEl.style.opacity = '0';
       setTimeout(() => {
-        greetingEl.textContent = greetings[gIdx];
+        greetingEl.textContent = greetings[gIdx].title;
+        if (subtitleEl) subtitleEl.textContent = greetings[gIdx].subtitle;
         greetingEl.style.opacity = '1';
+        if (subtitleEl) subtitleEl.style.opacity = '1';
       }, 200);
     }, 1500);
 
