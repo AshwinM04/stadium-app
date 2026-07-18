@@ -634,10 +634,9 @@ function updateStaffLangBadge() {
 }
 
 // ── Get the effective UI language ─────────────────────────
-// Returns the actual code to use for UI strings (falls back to 'en' for 'auto')
+// Returns the actual code to use for UI strings
 function getEffectiveUILang() {
-  if (selectedLangOverride !== 'auto') return selectedLangOverride;
-  return 'en'; // auto mode defaults UI to English
+  return selectedLangOverride || 'en';
 }
 
 // ============================================================
@@ -1417,7 +1416,7 @@ function appendStep(text, num) {
 
 // ── Language resolution ────────────────────────────────────
 function resolveLanguage(query) {
-  if (selectedLangOverride !== 'auto') return selectedLangOverride;
+  if (selectedLangOverride) return selectedLangOverride;
 
   const norm = query.toLowerCase();
   if      (/\b(baño|dónde|cómo|hambre|cerveza|sección|primeros auxilios)\b/i.test(norm)) return 'es';
@@ -1538,9 +1537,7 @@ function resolveAndRender(lang, startSec, startLvl, destSec, destLvl, destName, 
 
   destinationTitle.textContent = destName;
 
-  const langBadge = selectedLangOverride !== 'auto'
-    ? `🌐 ${OFFLINE_DICTIONARY[lang].langName}`
-    : `Auto: ${OFFLINE_DICTIONARY[lang].langName}`;
+  const langBadge = `🌐 ${OFFLINE_DICTIONARY[lang].langName}`;
 
   if (fac && fac.section) {
     const levelLabel = { 100: 'Lower Bowl', 200: 'Club Level', 300: 'Upper Bowl' };
@@ -1707,7 +1704,7 @@ window.addEventListener('DOMContentLoaded', () => {
   renderStaffPhrases('emergency');
   initAIChat();
 
-  // Apply default UI locale (English for 'auto')
+  // Apply default UI locale
   applyUILocale('en');
 
   if (stadiumSelect) {
