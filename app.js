@@ -919,7 +919,10 @@ function drawStadiumSVG() {
     circle.setAttribute('data-gate', gateName);
     circle.addEventListener('click', () => {
       queryInput.value = `Go to ${gateName}`;
-      handleConciergeSearch();
+      const loc = getStartLocation();
+      const startS = loc ? loc.section : 101;
+      const startL = loc ? loc.level : 100;
+      runOfflineEngine(queryInput.value, startS, startL, {x: gate.x, y: gate.y});
     });
     layoutGroup.appendChild(circle);
 
@@ -1187,43 +1190,28 @@ function drawActiveRoute(startSec, startLvl, endSec, endLvl, exactDestCoords = n
 
   let pathStr = '';
 
-  const startExact = customStartCoords || getStadiumCoords(startSec, startLvl);
-  const startConc = getStadiumCoords(startSec, startLvl, true);
-  
-  pathStr += `M ${startExact.x} ${startExact.y} `;
-  if (startExact.x !== startConc.x || startExact.y !== startConc.y) {
-    pathStr += `L ${startConc.x} ${startConc.y} `;
-  }
-
   if (startLvl === endLvl) {
-    pathStr += buildArcPath(startSec, endSec, startLvl, true);
+    pathStr = buildArcPath(startSec, endSec, startLvl);
   } else {
     const escGate  = findNearestGate(startSec);
     const gateData = STADIUM_DATA.gates[escGate];
-    const gateEndC = getStadiumCoords(gateData.section, endLvl, true);
-
-    const p1 = buildArcPath(startSec, gateData.section, startLvl, true);
-    const p2 = `L ${gateEndC.x} ${gateEndC.y}`;
-    const p3 = buildArcPath(gateData.section, endSec, endLvl, true);
-    pathStr  += `${p1} ${p2} ${p3}`;
-  }
-
-  const endConc = getStadiumCoords(endSec, endLvl, true);
-  if (endConc.x !== endCoords.x || endConc.y !== endCoords.y) {
-    pathStr += ` L ${endCoords.x} ${endCoords.y}`;
+    
+    const p1 = buildArcPath(startSec, gateData.section, startLvl);
+    const p2 = buildArcPath(gateData.section, endSec, endLvl);
+    pathStr  = `${p1} ${p2}`;
   }
 
   activeRoute.setAttribute('d', pathStr);
 }
 
 // ── SVG Arc Path (always shortest arc, stays inside bowl) ─
-function buildArcPath(secStart, secEnd, level, skipMove = false) {
+function buildArcPath(secStart, secEnd, level) {
   const c1 = getStadiumCoords(secStart, level, true);
   const c2 = getStadiumCoords(secEnd,   level, true);
 
-  let r = 50;
-  if (level === 200) r = 65;
-  if (level === 300) r = 80;
+  let r = 50.1;
+  if (level === 200) r = 65.1;
+  if (level === 300) r = 80.1;
 
   const b1      = getBase(secStart);
   const b2      = getBase(secEnd);
@@ -1232,12 +1220,8 @@ function buildArcPath(secStart, secEnd, level, skipMove = false) {
   const sweep = rawDiff <= 24 ? 1 : 0;
   const large = 0; // always minor arc
 
-  if (rawDiff === 0) {
-    return skipMove ? '' : `M ${c1.x} ${c1.y}`;
-  }
-
-  const move = skipMove ? '' : `M ${c1.x} ${c1.y} `;
-  return `${move}A ${r} ${r} 0 ${large} ${sweep} ${c2.x} ${c2.y}`;
+  if (rawDiff === 0) return '';
+  return `M ${c1.x} ${c1.y} A ${r} ${r} 0 ${large} ${sweep} ${c2.x} ${c2.y}`;
 }
 
 function getBase(sectionVal) {
@@ -1519,7 +1503,7 @@ function runOfflineEngine(query, defaultStartSec, defaultStartLvl, exactDestCoor
     || /(救急|医者|痛い)/.test(norm)) category = 'firstaid';
   else if (/\b(shop|store|merch|tshirt|shirt|cap|buy|tienda|boutique|laden|kaufen|loja)\b/i.test(norm)
     || /(ショップ|店|買う)/.test(norm)) category = 'merch';
-  else if (/\b(gate|puerta|porte|tor|porta)\b/i.test(norm)
+  else if (/\b(gate|puerta|porte|tor|porta|node)\b/i.test(norm)
     || /(ゲート|門)/.test(norm)) category = 'gate';
 
   // E. Gate resolution
@@ -1530,10 +1514,10 @@ function runOfflineEngine(query, defaultStartSec, defaultStartLvl, exactDestCoor
       return resolveAndRender(lang, startSec, startLvl, g.section.toString(), g.level, gateKey, null, exactDestCoords);
     }
     let targetGate = null;
-    if      (/\b(north|norte|nord)\b/i.test(norm)) targetGate = Object.keys(STADIUM_DATA.gates).find(k => /north|norte|nord|budlight|bud light|1/i.test(k));
-    else if (/\b(east|este|ost)\b/i.test(norm))    targetGate = Object.keys(STADIUM_DATA.gates).find(k => /east|este|verizon|2/i.test(k));
-    else if (/\b(south|sur|sud|süd)\b/i.test(norm))targetGate = Object.keys(STADIUM_DATA.gates).find(k => /south|sur|pepsi|3/i.test(k));
-    else if (/\b(west|oeste|ouest)\b/i.test(norm)) targetGate = Object.keys(STADIUM_DATA.gates).find(k => /west|oeste|metlife|4/i.test(k));
+    if      (/\b(north|norte|nord|budlight|bud light|node b|node 1)\b/i.test(norm)) targetGate = Object.keys(STADIUM_DATA.gates).find(k => /north|norte|nord|budlight|bud light|1/i.test(k));
+    else if (/\b(east|este|ost|verizon|node v|node 2)\b/i.test(norm))    targetGate = Object.keys(STADIUM_DATA.gates).find(k => /east|este|verizon|2/i.test(k));
+    else if (/\b(south|sur|sud|süd|pepsi|node p|node 3)\b/i.test(norm))  targetGate = Object.keys(STADIUM_DATA.gates).find(k => /south|sur|pepsi|3/i.test(k));
+    else if (/\b(west|oeste|ouest|metlife|node m|node 4)\b/i.test(norm)) targetGate = Object.keys(STADIUM_DATA.gates).find(k => /west|oeste|metlife|4/i.test(k));
     if (!targetGate) targetGate = Object.keys(STADIUM_DATA.gates)[0];
     const g = STADIUM_DATA.gates[targetGate];
     return resolveAndRender(lang, startSec, startLvl, g.section.toString(), g.level, targetGate, null, exactDestCoords);
