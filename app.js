@@ -2111,4 +2111,37 @@ document.addEventListener('DOMContentLoaded', () => {
       toggleStart.classList.remove('active-toggle');
     });
   }
+
+  // ── Phase 2: Splash Screen Logic ─────────────────────────────────
+  const splash = document.getElementById('welcome-splash');
+  if (splash) {
+    const greetingEl = document.getElementById('splash-greeting');
+    const greetings = ['Welcome', 'Bienvenido', 'Bienvenue', 'Willkommen', 'Bem-vindo', 'ようこそ', 'مرحباً'];
+    let gIdx = 0;
+    const cycleInterval = setInterval(() => {
+      gIdx = (gIdx + 1) % greetings.length;
+      greetingEl.style.opacity = '0';
+      setTimeout(() => {
+        greetingEl.textContent = greetings[gIdx];
+        greetingEl.style.opacity = '1';
+      }, 200);
+    }, 1500);
+
+    const langBtns = splash.querySelectorAll('.splash-lang-btn');
+    langBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        clearInterval(cycleInterval);
+        
+        const lang = btn.getAttribute('data-lang');
+        const selectEl = document.getElementById('lang-select');
+        if (selectEl) {
+          selectEl.value = lang;
+          selectEl.dispatchEvent(new Event('change'));
+        }
+        
+        splash.style.opacity = '0';
+        setTimeout(() => splash.style.display = 'none', 500);
+      });
+    });
+  }
 });
