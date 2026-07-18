@@ -773,8 +773,8 @@ function sectionAngle(sectionBase) {
   return ((b - 13) / 48) * 2 * Math.PI;
 }
 
-function getStadiumCoords(sectionVal, levelNum) {
-  if (STADIUM_DATA.gates[sectionVal]) {
+function getStadiumCoords(sectionVal, levelNum, forceConcourse = false) {
+  if (!forceConcourse && STADIUM_DATA.gates[sectionVal]) {
     const g = STADIUM_DATA.gates[sectionVal];
     return { x: g.x, y: g.y };
   }
@@ -1187,26 +1187,30 @@ function drawActiveRoute(startSec, startLvl, endSec, endLvl, exactDestCoords = n
 
   let pathStr = '';
 
-  if (customStartCoords) {
-    const c1 = getStadiumCoords(startSec, startLvl);
-    pathStr = `M ${customStartCoords.x} ${customStartCoords.y} L ${c1.x} ${c1.y} `;
+  const startExact = customStartCoords || getStadiumCoords(startSec, startLvl);
+  const startConc = getStadiumCoords(startSec, startLvl, true);
+  
+  pathStr += `M ${startExact.x} ${startExact.y} `;
+  if (startExact.x !== startConc.x || startExact.y !== startConc.y) {
+    pathStr += `L ${startConc.x} ${startConc.y} `;
   }
 
   if (startLvl === endLvl) {
-    pathStr += buildArcPath(startSec, endSec, startLvl, !!customStartCoords);
+    pathStr += buildArcPath(startSec, endSec, startLvl, true);
   } else {
     const escGate  = findNearestGate(startSec);
     const gateData = STADIUM_DATA.gates[escGate];
-    const gateEndC = getStadiumCoords(gateData.section, endLvl);
+    const gateEndC = getStadiumCoords(gateData.section, endLvl, true);
 
-    const p1 = buildArcPath(startSec, gateData.section, startLvl, !!customStartCoords);
+    const p1 = buildArcPath(startSec, gateData.section, startLvl, true);
     const p2 = `L ${gateEndC.x} ${gateEndC.y}`;
     const p3 = buildArcPath(gateData.section, endSec, endLvl, true);
     pathStr  += `${p1} ${p2} ${p3}`;
   }
 
-  if (exactDestCoords) {
-    pathStr += ` L ${exactDestCoords.x} ${exactDestCoords.y}`;
+  const endConc = getStadiumCoords(endSec, endLvl, true);
+  if (endConc.x !== endCoords.x || endConc.y !== endCoords.y) {
+    pathStr += ` L ${endCoords.x} ${endCoords.y}`;
   }
 
   activeRoute.setAttribute('d', pathStr);
@@ -1214,8 +1218,8 @@ function drawActiveRoute(startSec, startLvl, endSec, endLvl, exactDestCoords = n
 
 // ── SVG Arc Path (always shortest arc, stays inside bowl) ─
 function buildArcPath(secStart, secEnd, level, skipMove = false) {
-  const c1 = getStadiumCoords(secStart, level);
-  const c2 = getStadiumCoords(secEnd,   level);
+  const c1 = getStadiumCoords(secStart, level, true);
+  const c2 = getStadiumCoords(secEnd,   level, true);
 
   let r = 50;
   if (level === 200) r = 65;
