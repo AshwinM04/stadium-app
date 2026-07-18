@@ -40,22 +40,23 @@ Here is the simulated stadium facilities dataset:
   * gate_pepsi: Pepsi Gate (South Entrance, Near Section 125)
   * gate_metlife: MetLife Gate (West Entrance, Near Section 137)
 - RESTROOMS:
-  * restroom_112: Restrooms near Section 112 (Family/All-Gender)
-  * restroom_128: Restrooms near Section 128 (Men/Women)
-  * restroom_215: Restrooms near Section 215 (Men/Women/Family)
-  * restroom_330: Restrooms near Section 330 (Men/Women)
+  * restroom_128: Restroom (Section 128)
+  * restroom_215: Club Level Restroom (Section 215)
+  * restroom_330: Upper Deck Restroom (Section 330)
 - CONCESSIONS (FOOD & BEVERAGES):
-  * taco_110: Tacos World Cup (Section 110)
-  * burger_125: American Grill (Section 125)
-  * halal_143: Halal Eats (Section 143)
-  * brew_220: Stadium Brews (Section 220)
-  * brew_305: Stadium Brews (Section 305)
-  * vegan_118: Vegan Corner (Section 118)
+  * fuku_117: Fuku Chicken (Section 117)
+  * jersey_boardwalk_110: Jersey Boardwalk Sausage (Section 110)
+  * shahs_halal_314: Shah's Halal (Section 314)
+  * tacos_raqueros_217: Tacos Raqueros (Section 217)
+  * racetrack_bbq_125: Racetrack BBQ (Section 125)
+  * crescent_bagel_143: Crescent Bagels (Section 143)
+  * stadium_brews_220: Stadium Brews Club (Section 220)
+  * dos_toros_305: Dos Toros Tacos (Section 305)
 - FIRST AID:
-  * first_aid_119: First Aid near Section 119
-  * first_aid_326: First Aid near Section 326
+  * firstaid_119: First Aid Station (Section 119)
+  * firstaid_326: First Aid Station (Section 326)
 - MERCHANDISE:
-  * merch_101: FIFA Official Store (Section 101, near Gate A)
+  * merch_101: FIFA Official Store (Section 101)
   * merch_230: FIFA Express Store (Section 230)
 
 When answering questions:
