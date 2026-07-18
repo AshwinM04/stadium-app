@@ -1389,17 +1389,31 @@ function renderGenAIResults(data) {
   });
 
   let endSec = 112, endLvl = 100;
+  let found = false;
+
   if (data.end_location_id) {
     const fac = STADIUM_DATA.facilities.find(f => f.id === data.end_location_id);
-    if (fac) { endSec = fac.section; endLvl = fac.level; }
+    if (fac) { endSec = fac.section; endLvl = fac.level; found = true; }
     else {
       const gate = Object.values(STADIUM_DATA.gates).find(g => g.id === data.end_location_id);
-      if (gate) { endSec = gate.section; endLvl = gate.level; }
+      if (gate) { endSec = gate.section; endLvl = gate.level; found = true; }
     }
-  } else if (data.destination_matched) {
+  }
+  
+  if (!found && data.destination_matched) {
     const fac = STADIUM_DATA.facilities.find(f =>
       data.destination_matched.toLowerCase().includes(f.name.en.toLowerCase()));
     if (fac) { endSec = fac.section; endLvl = fac.level; }
+    else {
+      const gateKey = Object.keys(STADIUM_DATA.gates).find(k => 
+        data.destination_matched.toLowerCase().includes(k.toLowerCase()) ||
+        k.toLowerCase().includes(data.destination_matched.toLowerCase())
+      );
+      if (gateKey) {
+        const gate = STADIUM_DATA.gates[gateKey];
+        endSec = gate.section; endLvl = gate.level;
+      }
+    }
   }
 
   const startLoc = getStartLocation();
