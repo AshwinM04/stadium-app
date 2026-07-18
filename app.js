@@ -773,8 +773,8 @@ function sectionAngle(sectionBase) {
   return ((b - 13) / 48) * 2 * Math.PI;
 }
 
-function getStadiumCoords(sectionVal, levelNum, forceConcourse = false) {
-  if (!forceConcourse && STADIUM_DATA.gates[sectionVal]) {
+function getStadiumCoords(sectionVal, levelNum) {
+  if (STADIUM_DATA.gates[sectionVal]) {
     const g = STADIUM_DATA.gates[sectionVal];
     return { x: g.x, y: g.y };
   }
@@ -1190,28 +1190,39 @@ function drawActiveRoute(startSec, startLvl, endSec, endLvl, exactDestCoords = n
 
   let pathStr = '';
 
+  if (customStartCoords) {
+    const c1 = getStadiumCoords(startSec, startLvl);
+    pathStr = `M ${customStartCoords.x} ${customStartCoords.y} L ${c1.x} ${c1.y} `;
+  }
+
   if (startLvl === endLvl) {
-    pathStr = buildArcPath(startSec, endSec, startLvl);
+    pathStr += buildArcPath(startSec, endSec, startLvl, !!customStartCoords);
   } else {
     const escGate  = findNearestGate(startSec);
     const gateData = STADIUM_DATA.gates[escGate];
-    
-    const p1 = buildArcPath(startSec, gateData.section, startLvl);
-    const p2 = buildArcPath(gateData.section, endSec, endLvl);
-    pathStr  = `${p1} ${p2}`;
+    const gateEndC = getStadiumCoords(gateData.section, endLvl);
+
+    const p1 = buildArcPath(startSec, gateData.section, startLvl, !!customStartCoords);
+    const p2 = `L ${gateEndC.x} ${gateEndC.y}`;
+    const p3 = buildArcPath(gateData.section, endSec, endLvl, true);
+    pathStr  += `${p1} ${p2} ${p3}`;
+  }
+
+  if (exactDestCoords) {
+    pathStr += ` L ${exactDestCoords.x} ${exactDestCoords.y}`;
   }
 
   activeRoute.setAttribute('d', pathStr);
 }
 
 // ── SVG Arc Path (always shortest arc, stays inside bowl) ─
-function buildArcPath(secStart, secEnd, level) {
-  const c1 = getStadiumCoords(secStart, level, true);
-  const c2 = getStadiumCoords(secEnd,   level, true);
+function buildArcPath(secStart, secEnd, level, skipMove = false) {
+  const c1 = getStadiumCoords(secStart, level);
+  const c2 = getStadiumCoords(secEnd,   level);
 
-  let r = 50.1;
-  if (level === 200) r = 65.1;
-  if (level === 300) r = 80.1;
+  let r = 50;
+  if (level === 200) r = 65;
+  if (level === 300) r = 80;
 
   const b1      = getBase(secStart);
   const b2      = getBase(secEnd);
@@ -1220,8 +1231,12 @@ function buildArcPath(secStart, secEnd, level) {
   const sweep = rawDiff <= 24 ? 1 : 0;
   const large = 0; // always minor arc
 
-  if (rawDiff === 0) return '';
-  return `M ${c1.x} ${c1.y} A ${r} ${r} 0 ${large} ${sweep} ${c2.x} ${c2.y}`;
+  if (rawDiff === 0) {
+    return skipMove ? '' : `M ${c1.x} ${c1.y}`;
+  }
+
+  const move = skipMove ? '' : `M ${c1.x} ${c1.y} `;
+  return `${move}A ${r} ${r} 0 ${large} ${sweep} ${c2.x} ${c2.y}`;
 }
 
 function getBase(sectionVal) {
