@@ -2040,6 +2040,11 @@ function initAIChat() {
   if (fabBtn && chatCard) {
     fabBtn.addEventListener('click', () => {
       chatCard.classList.add('open');
+      const badge = fabBtn.querySelector('.badge');
+      if (badge) {
+        badge.style.transition = 'none';
+        badge.style.display = 'none';
+      }
       fabBtn.classList.add('hidden');
       if (!isAIFetching) {
         fabBtn.innerHTML = '<i class="ph-fill ph-chat-circle-text"></i> Ask AI';
