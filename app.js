@@ -1949,6 +1949,8 @@ async function askGenAI(userQuery) {
     const decoder = new TextDecoder("utf-8");
     let accumulatedText = "";
 
+    let routeTriggeredThisMessage = false;
+
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
@@ -1967,7 +1969,31 @@ async function askGenAI(userQuery) {
           } catch (e) {}
         }
       }
-      currentBubble.innerHTML = mdToHtml(accumulatedText);
+
+      let displayText = accumulatedText;
+      const routeMatch = accumulatedText.match(/\[ROUTE:\s*(.*?),\s*(.*?)\]/);
+      
+      if (routeMatch) {
+        const startLoc = routeMatch[1];
+        const endLoc = routeMatch[2];
+        displayText = accumulatedText.replace(routeMatch[0], '').trim();
+
+        if (!routeTriggeredThisMessage) {
+          routeTriggeredThisMessage = true;
+          
+          const ctrl = document.getElementById('control-panels');
+          if (ctrl) ctrl.classList.remove('hidden');
+
+          if (queryInput && startSectionInput) {
+            startSectionInput.value = startLoc;
+            queryInput.value = endLoc;
+            startSectionInput.dispatchEvent(new Event('input'));
+            handleConciergeSearch();
+          }
+        }
+      }
+
+      currentBubble.innerHTML = mdToHtml(displayText);
     }
 
     setAIStatus('idle');

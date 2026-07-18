@@ -147,6 +147,7 @@ def chat():
     data = request.get_json() or {}
     system_instruction = data.get("system_instruction", "")
     system_instruction += " You are a helpful stadium assistant. Keep general answers to 1-2 sentences. However, if the user explicitly asks for a list, you MUST provide the full list without truncating or asking for further clarification."
+    system_instruction += " If the user asks for directions or how to get from point A to point B, you must provide your helpful text response, and then append a routing command at the very end of your message in this exact format: [ROUTE: start_location, end_location]. Ensure the locations map exactly to the known valid node IDs on our stadium map."
     query = data.get("query", "")
 
     if not query:
