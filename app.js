@@ -1096,17 +1096,19 @@ function setupSearchableInput() {
 
 // ── Parse typed start location from inputs ─────────────────
 function getStartLocation() {
-  const lvlVal = startLevelInput.value;
+  const lvlVal = startLevelInput.value || '';
   const secVal = startSectionInput.value.trim();
 
-  if (!lvlVal || !secVal) return null;
+  if (!secVal) return null;
 
   let levelNum = 100;
   if (lvlVal.includes('200')) levelNum = 200;
   else if (lvlVal.includes('300')) levelNum = 300;
 
-  if (STADIUM_DATA.gates[secVal]) {
-    return { section: secVal, level: 100 };
+  for (const gateName in STADIUM_DATA.gates) {
+    if (gateName.toUpperCase() === secVal.toUpperCase()) {
+      return { section: gateName, level: 100 };
+    }
   }
 
   const secMatch = secVal.match(/(?:section\s*)?([123]\d{2})/i);
@@ -1114,6 +1116,8 @@ function getStartLocation() {
     const n = parseInt(secMatch[1]);
     return { section: n.toString(), level: Math.floor(n / 100) * 100 };
   }
+
+  if (!lvlVal) return null;
 
   return { section: (levelNum + 1).toString(), level: levelNum };
 }

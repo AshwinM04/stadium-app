@@ -35,10 +35,10 @@ The response MUST be a JSON object with this exact structure (do not wrap in mar
 
 Here is the simulated stadium facilities dataset:
 - GATES:
-  * gate_a: Gate A (North Entrance, Near Section 101/149)
-  * gate_b: Gate B (East Entrance, Near Section 113/114)
-  * gate_c: Gate C (South Entrance, Near Section 125/126)
-  * gate_d: Gate D (West Entrance, Near Section 137/138)
+  * gate_budlight: Bud Light Gate (North Entrance, Near Section 101)
+  * gate_verizon: Verizon Gate (East Entrance, Near Section 113)
+  * gate_pepsi: Pepsi Gate (South Entrance, Near Section 125)
+  * gate_metlife: MetLife Gate (West Entrance, Near Section 137)
 - RESTROOMS:
   * restroom_112: Restrooms near Section 112 (Family/All-Gender)
   * restroom_128: Restrooms near Section 128 (Men/Women)
@@ -62,7 +62,7 @@ When answering questions:
 1. Identify the user's intent: which facility category are they looking for? If they ask a generic question like "I need a doctor" or "tengo hambre", match it to First Aid or Concessions.
 2. Find the facility of that category that is closest to their starting location (or matches the specific gate/section they named). The user's query may contain their starting location (e.g., "where is the nearest bathroom from Section 110?"). If not specified in the query, use the provided start_location.
 3. Generate step-by-step walking directions. A stadium is a circle of sections numbered 101 to 149 (lower), 201 to 249 (middle), 301 to 349 (upper).
-   - If they are on a different level than the destination, they must use an escalator or stairs near the closest gate (Gate A is near section 101/149/201/249/301/349, Gate B is near 113/114/213/214/313/314, Gate C is near 125/126/225/226/325/326, Gate D is near 137/138/237/238/337/338).
+   - If they are on a different level than the destination, they must use an escalator or stairs near the closest gate (Bud Light Gate is near 101, Verizon Gate is near 113, Pepsi Gate is near 125, MetLife Gate is near 137).
    - Tell them which direction to walk (clockwise/counter-clockwise, or section numbers increasing/decreasing) to reach the destination.
 4. Translate the matched destination name and the step-by-step directions perfectly into the user's input language.
 5. The response must ONLY contain the raw JSON. Do not include markdown code block formatting (like ```json).
