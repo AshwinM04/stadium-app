@@ -2113,7 +2113,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const splash = document.getElementById('welcome-splash');
   if (splash) {
     const greetingEl = document.getElementById('splash-greeting');
-    const greetings = ['Welcome', 'Bienvenido', 'Bienvenue', 'Willkommen', 'Bem-vindo', 'ようこそ', 'مرحباً'];
+    const greetings = ['Welcome', 'Bienvenido', 'Bienvenue', 'Willkommen', 'Bem-vindo', 'ようこそ'];
     let gIdx = 0;
     const cycleInterval = setInterval(() => {
       gIdx = (gIdx + 1) % greetings.length;
