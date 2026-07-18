@@ -1389,21 +1389,32 @@ function renderGenAIResults(data) {
   });
 
   let endSec = 112, endLvl = 100;
+  let destCoords = null;
   let found = false;
 
   if (data.end_location_id) {
     const fac = STADIUM_DATA.facilities.find(f => f.id === data.end_location_id);
-    if (fac) { endSec = fac.section; endLvl = fac.level; found = true; }
+    if (fac) { 
+      endSec = fac.section; endLvl = fac.level; found = true; 
+      if (fac.x !== undefined && fac.y !== undefined) destCoords = { x: fac.x, y: fac.y };
+    }
     else {
-      const gate = Object.values(STADIUM_DATA.gates).find(g => g.id === data.end_location_id);
-      if (gate) { endSec = gate.section; endLvl = gate.level; found = true; }
+      const gateKey = Object.keys(STADIUM_DATA.gates).find(k => STADIUM_DATA.gates[k].id === data.end_location_id);
+      if (gateKey) {
+        const gate = STADIUM_DATA.gates[gateKey];
+        endSec = gateKey; endLvl = gate.level; found = true;
+        if (gate.x !== undefined && gate.y !== undefined) destCoords = { x: gate.x, y: gate.y };
+      }
     }
   }
   
   if (!found && data.destination_matched) {
     const fac = STADIUM_DATA.facilities.find(f =>
       data.destination_matched.toLowerCase().includes(f.name.en.toLowerCase()));
-    if (fac) { endSec = fac.section; endLvl = fac.level; }
+    if (fac) { 
+      endSec = fac.section; endLvl = fac.level; 
+      if (fac.x !== undefined && fac.y !== undefined) destCoords = { x: fac.x, y: fac.y };
+    }
     else {
       const gateKey = Object.keys(STADIUM_DATA.gates).find(k => 
         data.destination_matched.toLowerCase().includes(k.toLowerCase()) ||
@@ -1411,13 +1422,14 @@ function renderGenAIResults(data) {
       );
       if (gateKey) {
         const gate = STADIUM_DATA.gates[gateKey];
-        endSec = gate.section; endLvl = gate.level;
+        endSec = gateKey; endLvl = gate.level;
+        if (gate.x !== undefined && gate.y !== undefined) destCoords = { x: gate.x, y: gate.y };
       }
     }
   }
 
   const startLoc = getStartLocation();
-  drawActiveRoute(startLoc.section, startLoc.level, endSec, endLvl);
+  drawActiveRoute(startLoc.section, startLoc.level, endSec, endLvl, destCoords);
 }
 
 function appendStep(text, num) {
@@ -1625,7 +1637,12 @@ function resolveAndRender(lang, startSec, startLvl, destSec, destLvl, destName, 
   currentDirections        = steps;
   steps.forEach((step, idx) => appendStep(step, idx + 1));
 
-  drawActiveRoute(startSec, startLvl, destSec, destLvl, exactDestCoords);
+  let finalCoords = exactDestCoords;
+  if (!finalCoords && fac && fac.x !== undefined && fac.y !== undefined) {
+    finalCoords = { x: fac.x, y: fac.y };
+  }
+
+  drawActiveRoute(startSec, startLvl, destSec, destLvl, finalCoords);
 }
 
 // ── Language code helper ───────────────────────────────────
