@@ -1111,6 +1111,15 @@ function getStartLocation() {
     }
   }
 
+  const facMatch = STADIUM_DATA.facilities.find(f => 
+    secVal.toLowerCase().includes(f.name.en.toLowerCase()) || 
+    f.name.en.toLowerCase().includes(secVal.toLowerCase()) ||
+    (f.shortName && f.shortName.toLowerCase().includes(secVal.toLowerCase()))
+  );
+  if (facMatch) {
+    return { section: facMatch.section, level: facMatch.level, fac: facMatch, x: facMatch.x, y: facMatch.y };
+  }
+
   const secMatch = secVal.match(/(?:section\s*)?([123]\d{2})/i);
   if (secMatch) {
     const n = parseInt(secMatch[1]);
@@ -1137,7 +1146,9 @@ function triggerMapUpdate() {
   const loc = getStartLocation();
   const startPin = document.getElementById('start-pin');
   if (loc) {
-    const c = customStartCoords || getStadiumCoords(loc.section, loc.level);
+    let c = customStartCoords;
+    if (!c && loc.x !== undefined && loc.y !== undefined) c = { x: loc.x, y: loc.y };
+    if (!c) c = getStadiumCoords(loc.section, loc.level);
     startPin.setAttribute('cx', c.x);
     startPin.setAttribute('cy', c.y);
   } else {
