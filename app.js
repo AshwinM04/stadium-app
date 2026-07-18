@@ -2026,13 +2026,12 @@ async function askGenAI(userQuery) {
       }
 
       let displayText = accumulatedText;
-      const routeMatch = accumulatedText.match(/\[ROUTE:\s*(.*?),\s*(.*?)\]/);
+      const routeMatch = accumulatedText.match(/\[ROUTE:\s*(.+?),\s*(.+?)\]/i);
       
       if (routeMatch) {
         let startLoc = routeMatch[1].trim().toUpperCase().replace(/^(NODE|SECTION)\s+/i, '');
         let endLoc = routeMatch[2].trim().toUpperCase().replace(/^(NODE|SECTION)\s+/i, '');
-        displayText = accumulatedText.replace(routeMatch[0], '').trim();
-
+        
         if (!routeTriggeredThisMessage) {
           routeTriggeredThisMessage = true;
           
@@ -2043,10 +2042,17 @@ async function askGenAI(userQuery) {
             startSectionInput.value = startLoc;
             queryInput.value = endLoc;
             startSectionInput.dispatchEvent(new Event('input'));
-            handleConciergeSearch();
+            
+            handleConciergeSearch().catch(err => {
+              console.error(err);
+              displayText += '\n\n*Map Error: Could not plot this specific route. Please try again.*';
+              if (currentBubble) currentBubble.innerHTML = mdToHtml(displayText);
+            });
           }
         }
       }
+      
+      displayText = displayText.replace(/\[ROUTE:.*?\]/gi, '').trim();
 
       currentBubble.innerHTML = mdToHtml(displayText);
     }
