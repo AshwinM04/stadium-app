@@ -94,7 +94,7 @@ header {
   justify-content: space-between;
   align-items: center;
   gap: 8px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .brand {
@@ -123,6 +123,7 @@ header {
   font-weight: 700;
   letter-spacing: -0.5px;
   line-height: 1.2;
+  white-space: nowrap;
 }
 
 .brand-text span {
@@ -131,12 +132,14 @@ header {
   font-weight: 600;
   letter-spacing: 1px;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 /* ── Language Selector ──────────────────────────────────── */
 .lang-selector-wrapper {
   position: relative;
   flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .lang-select {
@@ -186,6 +189,7 @@ header {
   cursor: pointer;
   transition: var(--transition-fast);
   flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .status-badge:hover { background: rgba(255,255,255,0.10); }

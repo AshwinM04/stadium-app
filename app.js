@@ -222,7 +222,7 @@ const UI_STRINGS = {
   es: {
     appTitle:             'Fan Concierge',
     appSubtitle:          'Copa Mundial FIFA 2026',
-    modeGenAI:            'Modo GenIA',
+    modeGenAI:            'Modo GenAI',
     modeOffline:          'Modo Sin Conexión',
     sectionStadiumLocation: 'Estadio y Ubicación',
     placeholderLevel:     'Nivel…',
