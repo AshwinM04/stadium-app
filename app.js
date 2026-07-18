@@ -22,6 +22,20 @@ const STADIUM_CONFIGS = {
       'MetLife Gate':   { id: 'gate_metlife',  name: 'MetLife Gate (West)',    section: 137, level: 100, x: 15,  y: 100 }
     },
     facilities: [
+      // ── Gates ──
+      { id: 'gate_budlight', category: 'gate', section: 101, level: 100, x: 100, y: 15,
+        shortName: 'Bud Light Gate',
+        name: { en: 'Bud Light Gate (North)', es: 'Bud Light Gate (Norte)', fr: 'Porte Bud Light (Nord)', de: 'Bud Light Tor (Nord)', pt: 'Portão Bud Light (Norte)', ja: 'バドライト ゲート (北)' } },
+      { id: 'gate_verizon', category: 'gate', section: 113, level: 100, x: 185, y: 100,
+        shortName: 'Verizon Gate',
+        name: { en: 'Verizon Gate (East)', es: 'Verizon Gate (Este)', fr: 'Porte Verizon (Est)', de: 'Verizon Tor (Ost)', pt: 'Portão Verizon (Leste)', ja: 'ベライゾン ゲート (東)' } },
+      { id: 'gate_pepsi', category: 'gate', section: 125, level: 100, x: 100, y: 185,
+        shortName: 'Pepsi Gate',
+        name: { en: 'Pepsi Gate (South)', es: 'Pepsi Gate (Sur)', fr: 'Porte Pepsi (Sud)', de: 'Pepsi Tor (Süd)', pt: 'Portão Pepsi (Sul)', ja: 'ペプシ ゲート (南)' } },
+      { id: 'gate_metlife', category: 'gate', section: 137, level: 100, x: 15, y: 100,
+        shortName: 'MetLife Gate',
+        name: { en: 'MetLife Gate (West)', es: 'MetLife Gate (Oeste)', fr: 'Porte MetLife (Ouest)', de: 'MetLife Tor (West)', pt: 'Portão MetLife (Oeste)', ja: 'メットライフ ゲート (西)' } },
+
       // ── Restrooms ──
       { id: 'restroom_108', category: 'bathroom', section: 108, level: 100,
         shortName: 'Family Restroom (108)',
@@ -1362,11 +1376,17 @@ async function handleConciergeSearch() {
 
   if (isBackendOnline && !isOfflineForced) {
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+
       const res = await fetch(`${BACKEND_URL}/api/directions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query, start_location: `${startSec} (Level ${startLvl})` })
+        body: JSON.stringify({ query, start_location: `${startSec} (Level ${startLvl})` }),
+        signal: controller.signal
       });
+      clearTimeout(timeoutId);
+      
       if (!res.ok) throw new Error('Backend error');
       const data = await res.json();
 
@@ -1379,9 +1399,17 @@ async function handleConciergeSearch() {
     } catch {
       isBackendOnline = false; updateStatusUI();
       runOfflineEngine(query, startSec, startLvl);
+    } finally {
+      loadingCard.style.display = 'none';
     }
   } else {
-    setTimeout(() => runOfflineEngine(query, startSec, startLvl), 500);
+    setTimeout(() => {
+      try {
+        runOfflineEngine(query, startSec, startLvl);
+      } finally {
+        loadingCard.style.display = 'none';
+      }
+    }, 500);
   }
 }
 
